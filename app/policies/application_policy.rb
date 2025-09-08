@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ApplicationPolicy
   attr_reader :user, :record
 
@@ -37,17 +35,28 @@ class ApplicationPolicy
   end
 
   class Scope
+    attr_reader :user, :scope
+
     def initialize(user, scope)
       @user = user
       @scope = scope
     end
 
     def resolve
-      raise NoMethodError, "You must define #resolve in #{self.class}"
+      scope.all
     end
+  end
 
-    private
+  # Custom methods for our roles
+  def admin?
+    user&.admin?
+  end
 
-    attr_reader :user, :scope
+  def landlord?
+    user&.landlord?
+  end
+
+  def tenant?
+    user&.tenant?
   end
 end
