@@ -3,7 +3,7 @@ class FavoritesController < ApplicationController
 
   def create
     @property = Property.find(params[:property_id])
-    favorite = current_user.favorites.find_or_create_by(property: @property)
+    @favorite = current_user.favorites.find_or_create_by(property: @property)
 
     respond_to do |format|
       format.html { redirect_to @property, notice: "Added to favorites" }
