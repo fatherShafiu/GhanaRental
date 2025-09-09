@@ -1,0 +1,141 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">List a New Property</h1>
+
+    <%= form_with model: @property, local: true, html: { class: "space-y-6" } do |form| %>
+      <% if @property.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+          <h2 class="text-red-800 font-semibold mb-2">
+            <%= pluralize(@property.errors.count, "error") %> prohibited this property from being saved:
+          </h2>
+          <ul class="list-disc list-inside text-red-600">
+            <% @property.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Basic Information -->
+      <div class="border-b pb-6">
+        <h2 class="text-xl font-semibold mb-4">Basic Information</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <%= form.label :title, "Property Title *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.text_field :title, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "e.g., Modern Downtown Apartment" %>
+          </div>
+
+          <div>
+            <%= form.label :property_type, "Property Type *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.select :property_type,
+                           Property.property_types.keys.map { |k| [k.humanize, k] },
+                           { include_blank: "Select Property Type" },
+                           class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= form.label :description, "Description *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= form.text_area :description, rows: 4, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Describe your property in detail..." %>
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div class="border-b pb-6">
+        <h2 class="text-xl font-semibold mb-4">Pricing & Details</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <%= form.label :price, "Monthly Rent ($) *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.number_field :price, step: 0.01, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "1500.00" %>
+          </div>
+
+          <div>
+            <%= form.label :bedrooms, "Bedrooms *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.number_field :bedrooms, min: 0, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "2" %>
+          </div>
+
+          <div>
+            <%= form.label :bathrooms, "Bathrooms *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.number_field :bathrooms, min: 0, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "1" %>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= form.label :square_feet, "Square Feet", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= form.number_field :square_feet, min: 0, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "850" %>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="border-b pb-6">
+        <h2 class="text-xl font-semibold mb-4">Location</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <%= form.label :address, "Street Address *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.text_field :address, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "123 Main St" %>
+          </div>
+
+          <div>
+            <%= form.label :city, "City *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.text_field :city, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Accra" %>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div>
+            <%= form.label :state, "State/Region *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.text_field :state, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Greater Accra" %>
+          </div>
+
+          <div>
+            <%= form.label :zip_code, "ZIP/Postal Code *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.text_field :zip_code, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "00233" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Availability -->
+      <div class="border-b pb-6">
+        <h2 class="text-xl font-semibold mb-4">Availability</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <%= form.label :available_from, "Available From *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.date_field :available_from, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+
+          <div class="flex items-center mt-6">
+            <%= form.check_box :featured, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+            <%= form.label :featured, "Feature this property", class: "ml-2 block text-sm text-gray-900" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div class="border-b pb-6">
+        <h2 class="text-xl font-semibold mb-4">Images</h2>
+
+        <div>
+          <%= form.label :images, "Property Photos *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= form.file_field :images, multiple: true, accept: "image/jpeg,image/png,image/jpg,image/webp", class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          <p class="mt-1 text-sm text-gray-500">Upload multiple images of your property (JPEG, PNG, WebP)</p>
+        </div>
+
+        <div class="mt-4">
+          <%= form.label :floor_plan, "Floor Plan (Optional)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= form.file_field :floor_plan, accept: "image/jpeg,image/png,image/jpg,image/webp,application/pdf", class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          <p class="mt-1 text-sm text-gray-500">Upload a floor plan image or PDF</p>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="flex justify-end space-x-4 pt-6">
+        <%= link_to "Cancel", properties_path, class: "btn btn-secondary" %>
+        <%= form.submit "Create Property", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
