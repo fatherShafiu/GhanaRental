@@ -1,15 +1,15 @@
 class Property < ApplicationRecord
-  belongs_to :landlord, class_name: "User"
+  belongs_to :landlord, class_name: "User", foreign_key: "landlord_id"
   has_many_attached :images
   has_one_attached :floor_plan
 
   # Enums
-  enum property_type: {
+  enum :property_type, {
     apartment: 0, house: 1, condo: 2, townhouse: 3,
     studio: 4, loft: 5, duplex: 6, other: 7
   }
 
-  enum status: { draft: 0, published: 1, archived: 2, rented: 3 }
+  enum :status, { draft: 0, published: 1, archived: 2, rented: 3 }
 
   # Validations
   validates :title, presence: true, length: { maximum: 100 }
@@ -35,9 +35,9 @@ class Property < ApplicationRecord
   scope :by_city, ->(city) { where("LOWER(city) LIKE ?", "%#{city.downcase}%") }
   scope :by_price_range, ->(min, max) { where(price: min..max) }
 
-  # Geocoding (we'll set this up later with a geocoding service)
-  geocoded_by :full_address
-  after_validation :geocode, if: ->(obj) { obj.address_changed? || obj.city_changed? || obj.state_changed? }
+  # Geocoding - Commented out for now, will implement later
+  # geocoded_by :full_address
+  # after_validation :geocode, if: ->(obj){ obj.address_changed? || obj.city_changed? || obj.state_changed? }
 
   def full_address
     [ address, city, state, zip_code ].compact.join(", ")

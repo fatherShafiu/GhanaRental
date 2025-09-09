@@ -1,0 +1,85 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Available Properties</h1>
+
+    <% if policy(Property).create? %>
+      <%= link_to 'Add New Property', new_property_path, class: "btn btn-primary mt-4 md:mt-0" %>
+    <% end %>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-lg shadow p-6 mb-8">
+    <h2 class="text-lg font-semibold mb-4">Filter Properties</h2>
+    <%= form_with url: properties_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-4 gap-4" do |form| %>
+      <div>
+        <%= form.label :city, "City", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :city, value: params[:city], class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= form.label :property_type, "Type", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.select :property_type, options_for_select(Property.property_types.keys.map { |k| [k.humanize, k] }, params[:property_type]), { include_blank: "Any" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= form.label :bedrooms, "Bedrooms", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.select :bedrooms, options_for_select((1..5).map { |n| [n, n] }, params[:bedrooms]), { include_blank: "Any" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+      </div>
+
+      <div class="flex items-end">
+        <%= form.submit "Filter", class: "btn btn-primary w-full" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Properties Grid -->
+  <% if @properties.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @properties.each do |property| %>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+          <% if property.main_image %>
+            <%= image_tag property.main_image, class: "w-full h-48 object-cover" %>
+          <% else %>
+            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+              <span class="text-gray-500">No image</span>
+            </div>
+          <% end %>
+
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-semibold text-gray-900">
+                <%= link_to property.title, property, class: "hover:text-indigo-600" %>
+              </h3>
+              <span class="text-2xl font-bold text-indigo-600">$<%= property.price %></span>
+            </div>
+
+            <p class="text-gray-600 mb-4 line-clamp-2"><%= property.description %></p>
+
+            <div class="flex items-center text-sm text-gray-500 mb-4">
+              <span class="mr-4"><%= property.bedrooms %> beds</span>
+              <span class="mr-4"><%= property.bathrooms %> baths</span>
+              <% if property.square_feet %>
+                <span><%= number_to_human(property.square_feet) %> sqft</span>
+              <% end %>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-500"><%= property.city %>, <%= property.state %></span>
+              <span class="text-sm text-gray-500">Available <%= property.available_from.strftime('%b %d, %Y') %></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-8">
+      <%== pagy_nav(@pagy) %>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <p class="text-gray-500 text-lg">No properties found matching your criteria.</p>
+      <%= link_to "Clear filters", properties_path, class: "btn btn-secondary mt-4" %>
+    </div>
+  <% end %>
+</div>

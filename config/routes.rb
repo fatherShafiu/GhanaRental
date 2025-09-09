@@ -6,7 +6,18 @@ Rails.application.routes.draw do
   }
 
   # Root path
-  root "pages#home"
+  root "properties#index"
+
+  # Properties routes
+  resources :properties do
+    member do
+      patch :publish
+      patch :archive
+    end
+    collection do
+      get :my_properties
+    end
+  end
 
   # User dashboard based on role
   get "dashboard", to: "dashboards#show"
