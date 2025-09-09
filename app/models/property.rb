@@ -24,7 +24,7 @@ class Property < ApplicationRecord
   validate :available_from_cannot_be_in_past, on: :create
 
   # Image validations
-  validate :validate_images
+  # validate :validate_images
   validate :validate_floor_plan, if: -> { floor_plan.attached? }
 
   # Scopes

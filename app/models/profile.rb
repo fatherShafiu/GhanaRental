@@ -2,7 +2,7 @@ class Profile < ApplicationRecord
   belongs_to :user
 
   # Store preferences as JSON
-  serialize :preferences, coder: JSON
+  # serialize :preferences, coder: JSON
 
   # Avatar upload (we'll use Active Storage later)
   attribute :avatar_data, :text
