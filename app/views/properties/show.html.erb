@@ -1,0 +1,156 @@
+<div class="container mx-auto px-4 py-8">
+  <% if @property.images.attached? %>
+    <!-- Image Gallery -->
+    <div class="mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <% @property.images.each do |image| %>
+          <div class="rounded-lg overflow-hidden">
+            <%= image_tag image, class: "w-full h-64 object-cover hover:scale-105 transition-transform duration-300" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= @property.title %></h1>
+        <p class="text-2xl font-bold text-indigo-600 mb-4">$<%= @property.price %> <span class="text-sm text-gray-500">/ month</span></p>
+
+        <div class="flex flex-wrap gap-4 mb-6">
+          <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+            <%= @property.bedrooms %> Bedrooms
+          </span>
+          <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+            <%= @property.bathrooms %> Bathrooms
+          </span>
+          <% if @property.square_feet %>
+            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+              <%= number_to_human(@property.square_feet) %> sqft
+            </span>
+          <% end %>
+          <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+            <%= @property.property_type.humanize %>
+          </span>
+        </div>
+
+        <div class="prose max-w-none mb-6">
+          <h3 class="text-xl font-semibold mb-3">Description</h3>
+          <p class="text-gray-700 leading-relaxed"><%= @property.description %></p>
+        </div>
+
+        <div class="border-t pt-6">
+          <h3 class="text-xl font-semibold mb-3">Property Details</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-gray-600">Address:</span>
+              <p class="font-medium"><%= @property.full_address %></p>
+            </div>
+            <div>
+              <span class="text-gray-600">Available From:</span>
+              <p class="font-medium"><%= @property.available_from.strftime('%B %d, %Y') %></p>
+            </div>
+            <div>
+              <span class="text-gray-600">Property Type:</span>
+              <p class="font-medium"><%= @property.property_type.humanize %></p>
+            </div>
+            <div>
+              <span class="text-gray-600">Status:</span>
+              <p class="font-medium capitalize"><%= @property.status %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floor Plan Section -->
+      <% if @property.floor_plan.attached? %>
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h3 class="text-xl font-semibold mb-4">Floor Plan</h3>
+          <div class="border rounded-lg p-4">
+            <%= image_tag @property.floor_plan, class: "w-full h-auto max-w-md mx-auto" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-lg shadow-md p-6 sticky top-6">
+        <h3 class="text-xl font-semibold mb-4">Contact Information</h3>
+
+        <% if @property.landlord.profile %>
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
+              <span class="text-indigo-600 font-semibold">
+                <%= @property.landlord.profile.first_name[0] %><%= @property.landlord.profile.last_name[0] %>
+              </span>
+            </div>
+            <div>
+              <p class="font-semibold"><%= @property.landlord.profile.full_name %></p>
+              <p class="text-sm text-gray-600">Property Owner</p>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="space-y-3">
+          <% if user_signed_in? %>
+            <%= link_to "Send Message", "#", class: "btn btn-primary w-full text-center" %>
+            <%= link_to "Apply for Rental", "#", class: "btn btn-secondary w-full text-center" %>
+
+            <!-- Favorite Button -->
+            <%= button_to toggle_favorite_property_path(@property),
+                         method: :post,
+                         class: "btn #{current_user.favorited?(@property) ? 'btn-danger' : 'btn-secondary'} w-full" do %>
+              <%= current_user.favorited?(@property) ? 'Remove from Favorites' : 'Add to Favorites' %>
+            <% end %>
+          <% else %>
+            <%= link_to "Login to Contact", new_user_session_path, class: "btn btn-primary w-full text-center" %>
+            <%= link_to "Create Account", new_user_registration_path, class: "btn btn-secondary w-full text-center" %>
+          <% end %>
+        </div>
+
+        <!-- Quick Facts -->
+        <div class="mt-6 pt-6 border-t">
+          <h4 class="font-semibold mb-3">Quick Facts</h4>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Posted:</span>
+              <span class="font-medium"><%= time_ago_in_words(@property.created_at) %> ago</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Last updated:</span>
+              <span class="font-medium"><%= time_ago_in_words(@property.updated_at) %> ago</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Views:</span>
+              <span class="font-medium">Coming soon</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action buttons for owners/admins -->
+  <% if policy(@property).edit? %>
+    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-xl font-semibold mb-4">Property Management</h3>
+      <div class="flex flex-wrap gap-4">
+        <%= link_to "Edit Property", edit_property_path(@property), class: "btn btn-primary" %>
+
+        <% if @property.draft? %>
+          <%= button_to "Publish", publish_property_path(@property), method: :patch, class: "btn btn-secondary" %>
+        <% elsif @property.published? %>
+          <%= button_to "Archive", archive_property_path(@property), method: :patch, class: "btn btn-secondary" %>
+        <% end %>
+
+        <%= button_to "Delete Property", property_path(@property),
+                     method: :delete,
+                     data: { confirm: "Are you sure you want to delete this property?" },
+                     class: "btn btn-danger" %>
+      </div>
+    </div>
+  <% end %>
+</div>
