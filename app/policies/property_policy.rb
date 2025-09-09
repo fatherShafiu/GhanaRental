@@ -1,9 +1,9 @@
 class PropertyPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if admin?
+      if user&.admin?
         scope.all
-      elsif landlord?
+      elsif user&.landlord?
         scope.where(landlord: user)
       else
         scope.published.available
