@@ -3,6 +3,9 @@ class Property < ApplicationRecord
   has_many_attached :images
   has_one_attached :floor_plan
 
+  has_many :favorites, dependent: :destroy
+  has_many :favorited_by_users, through: :favorites, source: :user
+
   # Enums
   enum :property_type, {
     apartment: 0, house: 1, condo: 2, townhouse: 3,

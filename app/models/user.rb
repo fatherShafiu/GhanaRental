@@ -13,6 +13,13 @@ class User < ApplicationRecord
   has_many :properties, foreign_key: "landlord_id", dependent: :destroy
   has_many :applications, foreign_key: "tenant_id", dependent: :destroy
 
+    has_many :favorites, dependent: :destroy
+  has_many :favorited_properties, through: :favorites, source: :property
+
+  def favorited?(property)
+    favorites.exists?(property: property)
+  end
+
   # Callbacks
   after_create :create_profile
 
