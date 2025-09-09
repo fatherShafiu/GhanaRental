@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     end
     collection do
       get :my_properties
+      get :favorites # Add this line
     end
   end
 

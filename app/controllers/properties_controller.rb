@@ -68,6 +68,20 @@ class PropertiesController < ApplicationController
     redirect_to @property, notice: "Property has been archived."
   end
 
+
+# In app/controllers/properties_controller.rb
+def toggle_favorite
+  @property = Property.find(params[:id])
+  if current_user.favorited?(@property)
+    current_user.favorites.where(property: @property).destroy_all
+    notice = "Removed from favorites"
+  else
+    current_user.favorites.create(property: @property)
+    notice = "Added to favorites"
+  end
+
+  redirect_to @property, notice: notice
+end
   private
 
   def set_property
