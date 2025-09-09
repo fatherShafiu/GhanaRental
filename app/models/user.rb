@@ -6,7 +6,7 @@ class User < ApplicationRecord
          :trackable
 
   # Roles
-  enum role: { tenant: 0, landlord: 1, admin: 2 }
+  enum :role, { tenant: 0, landlord: 1, admin: 2 }
 
   # Associations
   has_one :profile, dependent: :destroy
