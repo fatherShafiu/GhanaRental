@@ -31,9 +31,9 @@
               <%= number_to_human(@property.square_feet) %> sqft
             </span>
           <% end %>
-          <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
-            <%= @property.property_type.humanize %>
-          </span>
+      <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+  <%= @property.property_type&.humanize || 'Not specified' %>
+</span>
         </div>
 
         <div class="prose max-w-none mb-6">
@@ -54,7 +54,7 @@
             </div>
             <div>
               <span class="text-gray-600">Property Type:</span>
-              <p class="font-medium"><%= @property.property_type.humanize %></p>
+              <p class="font-medium"> <%= @property.property_type&.humanize || 'Not specified' %></p>
             </div>
             <div>
               <span class="text-gray-600">Status:</span>
