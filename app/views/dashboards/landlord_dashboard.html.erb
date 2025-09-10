@@ -1,0 +1,88 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Landlord Dashboard</h1>
+    <%= link_to 'Add New Property', new_property_path, class: "btn btn-primary" %>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Total Properties</h3>
+      <p class="text-3xl font-bold text-indigo-600"><%= @properties.count %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Published</h3>
+      <p class="text-3xl font-bold text-green-600"><%= @published_count %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Drafts</h3>
+      <p class="text-3xl font-bold text-yellow-600"><%= @draft_count %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Total Favorites</h3>
+      <p class="text-3xl font-bold text-pink-600"><%= @total_favorites %></p>
+    </div>
+  </div>
+
+  <!-- Properties List -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-xl font-semibold mb-4">Your Properties</h2>
+
+    <% if @properties.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Favorites</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @properties.each do |property| %>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <% if property.images.attached? %>
+                      <%= image_tag property.images.first, class: "h-10 w-10 rounded-full object-cover mr-3" %>
+                    <% end %>
+                    <div>
+                      <%= link_to property.title, property, class: "text-indigo-600 hover:text-indigo-900 font-medium" %>
+                      <p class="text-sm text-gray-500"><%= property.city %>, <%= property.state %></p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">$<%= property.price %></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full
+                    <%= property.published? ? 'bg-green-100 text-green-800' :
+                       property.draft? ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' %>">
+                    <%= property.status %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <%= property.favorites.count %> favorites
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <%= link_to 'Edit', edit_property_path(property), class: "text-indigo-600 hover:text-indigo-900 mr-3" %>
+                  <% if property.draft? %>
+                    <%= button_to 'Publish', publish_property_path(property), method: :patch, class: "text-green-600 hover:text-green-900 mr-3" %>
+                  <% elsif property.published? %>
+                    <%= button_to 'Archive', archive_property_path(property), method: :patch, class: "text-gray-600 hover:text-gray-900" %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-8">
+        <p class="text-gray-500 mb-4">You haven't listed any properties yet.</p>
+        <%= link_to 'List Your First Property', new_property_path, class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

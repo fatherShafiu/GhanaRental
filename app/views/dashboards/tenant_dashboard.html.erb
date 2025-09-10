@@ -1,0 +1,110 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-8">Tenant Dashboard</h1>
+
+  <!-- Favorite Properties -->
+  <div class="mb-8">
+    <h2 class="text-xl font-semibold mb-4">Your Favorite Properties</h2>
+
+    <% if @favorite_properties.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @favorite_properties.each do |property| %>
+          <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <% if property.main_image %>
+              <%= image_tag property.main_image, class: "w-full h-48 object-cover" %>
+            <% else %>
+              <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                <span class="text-gray-500">No image</span>
+              </div>
+            <% end %>
+
+            <div class="p-4">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                <%= link_to property.title, property, class: "hover:text-indigo-600" %>
+              </h3>
+
+              <p class="text-2xl font-bold text-indigo-600 mb-2">$<%= property.price %></p>
+
+              <div class="flex items-center text-sm text-gray-500 mb-3">
+                <span class="mr-4"><%= property.bedrooms %> beds</span>
+                <span class="mr-4"><%= property.bathrooms %> baths</span>
+                <% if property.square_feet %>
+                  <span><%= number_to_human(property.square_feet) %> sqft</span>
+                <% end %>
+              </div>
+
+              <p class="text-sm text-gray-600 mb-3"><%= property.city %>, <%= property.state %></p>
+
+              <div class="flex justify-between items-center">
+                <%= button_to "Remove from Favorites",
+                            toggle_favorite_property_path(property),
+                            method: :post,
+                            class: "text-red-600 hover:text-red-800 text-sm" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-white rounded-lg shadow p-6 text-center">
+        <p class="text-gray-500 mb-4">You haven't favorited any properties yet.</p>
+        <%= link_to 'Browse Properties', properties_path, class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Recent Properties -->
+  <div>
+    <h2 class="text-xl font-semibold mb-4">Recently Added Properties</h2>
+
+    <% if @recent_properties.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @recent_properties.each do |property| %>
+          <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <% if property.main_image %>
+              <%= image_tag property.main_image, class: "w-full h-48 object-cover" %>
+            <% else %>
+              <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                <span class="text-gray-500">No image</span>
+              </div>
+            <% end %>
+
+            <div class="p-4">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                <%= link_to property.title, property, class: "hover:text-indigo-600" %>
+              </h3>
+
+              <p class="text-2xl font-bold text-indigo-600 mb-2">$<%= property.price %></p>
+
+              <div class="flex items-center text-sm text-gray-500 mb-3">
+                <span class="mr-4"><%= property.bedrooms %> beds</span>
+                <span class="mr-4"><%= property.bathrooms %> baths</span>
+                <% if property.square_feet %>
+                  <span><%= number_to_human(property.square_feet) %> sqft</span>
+                <% end %>
+              </div>
+
+              <p class="text-sm text-gray-600 mb-3"><%= property.city %>, <%= property.state %></p>
+
+              <div class="flex justify-between items-center">
+                <%= button_to property.favorited_by_users.include?(current_user) ? "Remove Favorite" : "Add to Favorites",
+                            toggle_favorite_property_path(property),
+                            method: :post,
+                            class: "text-sm #{property.favorited_by_users.include?(current_user) ? 'text-red-600 hover:text-red-800' : 'text-indigo-600 hover:text-indigo-800'}" %>
+
+                <%= link_to "View Details", property, class: "btn btn-secondary text-sm" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="mt-6 text-center">
+        <%= link_to 'View All Properties', properties_path, class: "btn btn-primary" %>
+      </div>
+    <% else %>
+      <div class="bg-white rounded-lg shadow p-6 text-center">
+        <p class="text-gray-500">No properties available at the moment.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
