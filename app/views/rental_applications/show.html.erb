@@ -1,0 +1,75 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <!-- Header -->
+      <div class="flex justify-between items-start mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Rental Application</h1>
+          <p class="text-gray-600">for <%= link_to @application.property.title, @application.property, class: "text-indigo-600 hover:text-indigo-800" %></p>
+        </div>
+
+        <span class="px-3 py-1 text-sm font-semibold rounded-full <%= application_status_class(@application.status) %>">
+          <%= @application.status.humanize %>
+        </span>
+      </div>
+
+      <!-- Applicant Info -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900 mb-3">Applicant Information</h2>
+          <div class="space-y-2">
+            <p><strong>Name:</strong> <%= @application.tenant.profile&.full_name || @application.tenant.email %></p>
+            <p><strong>Email:</strong> <%= @application.tenant.email %></p>
+            <p><strong>Phone:</strong> <%= @application.tenant.profile&.phone_number || 'Not provided' %></p>
+            <p><strong>Applied on:</strong> <%= @application.submitted_at.strftime('%B %d, %Y at %H:%M') %></p>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900 mb-3">Property Information</h2>
+          <div class="space-y-2">
+            <p><strong>Address:</strong> <%= @application.property.full_address %></p>
+            <p><strong>Rent:</strong> $<%= @application.property.price %>/month</p>
+            <p><strong>Bedrooms:</strong> <%= @application.property.bedrooms %></p>
+            <p><strong>Bathrooms:</strong> <%= @application.property.bathrooms %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message -->
+      <div class="border-t pt-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-3">Applicant's Message</h2>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700"><%= @application.message %></p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="border-t pt-6">
+        <% if current_user.landlord? && @application.pending? %>
+          <div class="flex space-x-4">
+            <%= link_to 'Approve Application',
+                      rental_application_path(@application, rental_application: { status: :approved }),
+                      method: :patch,
+                      data: { confirm: 'Are you sure you want to approve this application?' },
+                      class: "btn btn-success" %>
+
+            <%= link_to 'Reject Application',
+                      rental_application_path(@application, rental_application: { status: :rejected }),
+                      method: :patch,
+                      data: { confirm: 'Are you sure you want to reject this application?' },
+                      class: "btn btn-danger" %>
+          </div>
+        <% elsif current_user.tenant? && @application.pending? %>
+          <%= link_to 'Withdraw Application',
+                    @application,
+                    method: :delete,
+                    data: { confirm: 'Are you sure you want to withdraw your application?' },
+                    class: "btn btn-danger" %>
+        <% end %>
+
+        <%= link_to 'Back to Applications', rental_applications_path, class: "btn btn-secondary mt-4" %>
+      </div>
+    </div>
+  </div>
+</div>
