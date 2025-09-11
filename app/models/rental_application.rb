@@ -1,6 +1,7 @@
 class RentalApplication < ApplicationRecord
   belongs_to :property
   belongs_to :tenant, class_name: "User"
+  has_many :notifications, as: :notifiable, dependent: :destroy
 
   enum status: { pending: 0, approved: 1, rejected: 2, withdrawn: 3 }
 
