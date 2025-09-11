@@ -13,6 +13,9 @@ class RentalApplication < ApplicationRecord
   scope :for_property, ->(property_id) { where(property_id: property_id) }
   scope :by_tenant, ->(tenant_id) { where(tenant_id: tenant_id) }
 
+  after_create_commit :notify_landlord
+  after_update_commit :notify_tenant_of_status_change
+
   private
 
   def set_submitted_at
