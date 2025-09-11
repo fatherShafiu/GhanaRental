@@ -1,0 +1,62 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h1 class="text-2xl font-bold text-gray-900 mb-6">Apply for <%= @property.title %></h1>
+
+      <%= form_with model: [@property, @application], local: true do |form| %>
+        <% if @application.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+            <h2 class="text-red-800 font-semibold mb-2">
+              <%= pluralize(@application.errors.count, "error") %> prohibited this application from being saved:
+            </h2>
+            <ul class="list-disc list-inside text-red-600">
+              <% @application.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- Property Info -->
+        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+          <h3 class="font-semibold text-gray-900 mb-2">Property Details</h3>
+          <p class="text-gray-700"><%= @property.full_address %></p>
+          <p class="text-gray-700">$<%= @property.price %>/month • <%= @property.bedrooms %> bed • <%= @property.bathrooms %> bath</p>
+        </div>
+
+        <!-- Your Info -->
+        <div class="mb-6">
+          <h3 class="font-semibold text-gray-900 mb-3">Your Information</h3>
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-sm text-gray-600">Name</p>
+              <p class="font-medium"><%= current_user.profile&.full_name || 'Not set' %></p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600">Email</p>
+              <p class="font-medium"><%= current_user.email %></p>
+            </div>
+          </div>
+          <p class="text-sm text-gray-500">
+            <%= link_to 'Update your profile', edit_user_registration_path, class: "text-indigo-600 hover:text-indigo-800" %> to ensure landlords have your current information.
+          </p>
+        </div>
+
+        <!-- Message -->
+        <div class="mb-6">
+          <%= form.label :message, "Why are you interested in this property? *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.text_area :message, rows: 6,
+                            class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                            placeholder: "Tell the landlord about yourself, your rental history, and why you'd be a great tenant..." %>
+          <p class="mt-1 text-sm text-gray-500">This is your chance to make a good impression!</p>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex space-x-4">
+          <%= link_to 'Cancel', @property, class: "btn btn-secondary" %>
+          <%= form.submit "Submit Application", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
