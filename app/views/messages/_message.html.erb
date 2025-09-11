@@ -1,0 +1,10 @@
+<div class="flex <%= message.user == current_user ? 'justify-end' : 'justify-start' %>">
+  <div class="max-w-xs lg:max-w-md">
+    <div class="<%= message.user == current_user ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-900' %> rounded-lg px-4 py-2">
+      <p class="text-sm"><%= message.body %></p>
+    </div>
+    <p class="text-xs text-gray-500 mt-1 <%= message.user == current_user ? 'text-right' : 'text-left' %>">
+      <%= time_ago_in_words(message.created_at) %> ago
+    </p>
+  </div>
+</div>
