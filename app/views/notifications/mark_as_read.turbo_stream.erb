@@ -1,0 +1,8 @@
+<%= turbo_stream.remove @notification %>
+<%= turbo_stream.append "notifications_#{current_user.id}" do %>
+  <%= render 'notifications/notification', notification: @notification %>
+<% end %>
+
+<%= turbo_stream.update "notifications_count" do %>
+  <%= render 'notifications/count', count: current_user.unread_notifications_count %>
+<% end %>
