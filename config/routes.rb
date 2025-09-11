@@ -13,14 +13,16 @@ Rails.application.routes.draw do
     member do
       patch :publish
       patch :archive
+      post :toggle_favorite
+      delete :purge_image
     end
     collection do
       get :my_properties
-      get :favorites # Add this line
+      get :favorites
     end
   end
 
-  # User dashboard based on role
+  # User dashboard
   get "dashboard", to: "dashboards#show"
 
   # Additional routes will be added here as we progress

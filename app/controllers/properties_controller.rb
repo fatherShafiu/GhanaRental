@@ -68,7 +68,15 @@ class PropertiesController < ApplicationController
     redirect_to @property, notice: "Property has been archived."
   end
 
+def my_properties
+  @properties = current_user.properties.includes(:favorites, images_attachments: :blob).order(created_at: :desc)
+  authorize @properties
+end
 
+def favorites
+  @properties = current_user.favorited_properties.includes(:landlord, images_attachments: :blob).published.available
+  authorize @properties
+end
 # In app/controllers/properties_controller.rb
 def toggle_favorite
   @property = Property.find(params[:id])
