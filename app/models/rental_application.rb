@@ -21,4 +21,24 @@ class RentalApplication < ApplicationRecord
   def set_submitted_at
     self.submitted_at = Time.current
   end
+
+
+
+def notify_landlord
+  Notification.create(
+    user: property.landlord,
+    notifiable: self,
+    message: "New rental application from #{tenant.profile&.full_name || tenant.email} for #{property.title}"
+  )
+end
+
+def notify_tenant_of_status_change
+  return unless saved_change_to_status?
+
+  Notification.create(
+    user: tenant,
+    notifiable: self,
+    message: "Your application for #{property.title} has been #{status}."
+  )
+end
 end
