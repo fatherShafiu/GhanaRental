@@ -13,10 +13,16 @@ class Notification < ApplicationRecord
 
   private
 
-  def broadcast_to_user
-    broadcast_append_to user,
-                       target: "notifications_#{user.id}",
-                       partial: "notifications/notification",
-                       locals: { notification: self }
-  end
+
+def broadcast_to_user
+  broadcast_append_to user,
+                     target: "notifications_#{user.id}",
+                     partial: "notifications/notification",
+                     locals: { notification: self }
+
+  broadcast_update_to user,
+                     target: "notifications_count",
+                     partial: "notifications/count",
+                     locals: { count: user.unread_notifications_count }
+end
 end
