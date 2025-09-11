@@ -40,6 +40,16 @@ Rails.application.routes.draw do
       patch :mark_all_as_read
     end
   end
+
+    resources :payments, only: [ :index, :show ] do
+    member do
+      post :process_payment
+      get :status
+    end
+  end
+
+  # Momo callback
+  post "/momo/callback", to: "payments#callback"
   # User dashboard
   get "dashboard", to: "dashboards#show"
 
