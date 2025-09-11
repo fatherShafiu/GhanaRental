@@ -68,3 +68,6 @@ gem "faker", "~> 3.5", :groups => [:development, :test]
 gem "annotate", "~> 2.6", :groups => [:development, :test]
 
 gem "pagy", "~> 9.4"
+
+gem "faraday", "~> 2.13"
+gem "dotenv-rails", "~> 3.1"
