@@ -93,7 +93,27 @@
             </div>
           </div>
         <% end %>
+        <!-- In the sidebar contact section -->
+<div class="space-y-3">
+  <% if user_signed_in? %>
+    <% if current_user.tenant? %>
+      <% if current_user.rental_applications.for_property(@property.id).exists? %>
+        <%= link_to "View Application", rental_application_path(current_user.rental_applications.for_property(@property.id).first),
+                  class: "btn btn-secondary w-full text-center" %>
+      <% else %>
+        <%= link_to "Apply for Rental", new_property_rental_application_path(@property),
+                  class: "btn btn-primary w-full text-center" %>
+      <% end %>
+    <% end %>
 
+    <%= link_to "Send Message",
+              conversations_path(recipient_id: @property.landlord.id, property_id: @property.id),
+              method: :post,
+              class: "btn btn-secondary w-full text-center" %>
+  <% else %>
+    <%= link_to "Login to Apply", new_user_session_path, class: "btn btn-primary w-full text-center" %>
+  <% end %>
+</div>
         <div class="space-y-3">
           <% if user_signed_in? %>
             <%= link_to "Send Message", "#", class: "btn btn-primary w-full text-center" %>
