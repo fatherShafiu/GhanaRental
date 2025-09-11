@@ -21,7 +21,25 @@ Rails.application.routes.draw do
       get :favorites
     end
   end
+   resources :conversations, only: [ :index, :show, :create ] do
+    resources :messages, only: :create
+  end
 
+  # Rental applications routes
+  resources :rental_applications, only: [ :index, :show, :update, :destroy ]
+  resources :properties do
+    resources :rental_applications, only: [ :new, :create ]
+  end
+
+  # Notifications routes
+  resources :notifications, only: [ :index ] do
+    member do
+      patch :mark_as_read
+    end
+    collection do
+      patch :mark_all_as_read
+    end
+  end
   # User dashboard
   get "dashboard", to: "dashboards#show"
 
