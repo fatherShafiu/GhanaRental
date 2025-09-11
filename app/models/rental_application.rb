@@ -16,6 +16,27 @@ class RentalApplication < ApplicationRecord
   after_create_commit :notify_landlord
   after_update_commit :notify_tenant_of_status_change
 
+  has_one :payment, dependent: :destroy
+
+  after_update :create_payment_on_approval, if: :saved_change_to_status?
+
+  def create_payment_on_approval
+    return unless approved? && payment.nil?
+
+    create_payment(
+      amount: property.price,
+      currency: "GHS", # Ghana Cedis
+      status: :pending
+    )
+
+    # Notify tenant to make payment
+    Notification.create(
+      user: tenant,
+      notifiable: payment,
+      message: "Your application was approved! Please make your first rent payment of $#{property.price}."
+    )
+  end
+
   private
 
   def set_submitted_at
