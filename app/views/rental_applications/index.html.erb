@@ -1,0 +1,95 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-8">
+    <%= current_user.landlord? ? 'Rental Applications' : 'My Applications' %>
+  </h1>
+
+  <% if @applications.any? %>
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <% if current_user.landlord? %>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applicant</th>
+            <% end %>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @applications.each do |application| %>
+            <tr>
+              <% if current_user.landlord? %>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
+                      <span class="text-indigo-600 font-semibold">
+                        <%= application.tenant.profile&.first_name&.first || 'T' %>
+                      </span>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">
+                        <%= application.tenant.profile&.full_name || application.tenant.email %>
+                      </p>
+                      <p class="text-sm text-gray-500"><%= application.tenant.email %></p>
+                    </div>
+                  </div>
+                </td>
+              <% end %>
+
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%= link_to application.property.title, application.property, class: "text-indigo-600 hover:text-indigo-800 text-sm font-medium" %>
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs font-semibold rounded-full
+                  <%= application_status_class(application.status) %>">
+                  <%= application.status.humanize %>
+                </span>
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= application.submitted_at.strftime('%b %d, %Y') %>
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <%= link_to 'View', application, class: "text-indigo-600 hover:text-indigo-900 mr-3" %>
+                <% if current_user.landlord? && application.pending? %>
+                  <%= link_to 'Approve', rental_application_path(application, rental_application: { status: :approved }),
+                            method: :patch,
+                            data: { confirm: 'Are you sure you want to approve this application?' },
+                            class: "text-green-600 hover:text-green-900 mr-3" %>
+                  <%= link_to 'Reject', rental_application_path(application, rental_application: { status: :rejected }),
+                            method: :patch,
+                            data: { confirm: 'Are you sure you want to reject this application?' },
+                            class: "text-red-600 hover:text-red-900" %>
+                <% elsif current_user.tenant? && application.pending? %>
+                  <%= link_to 'Withdraw', application,
+                            method: :delete,
+                            data: { confirm: 'Are you sure you want to withdraw your application?' },
+                            class: "text-red-600 hover:text-red-900" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg shadow p-12 text-center">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <h3 class="mt-4 text-lg font-medium text-gray-900">No applications yet</h3>
+      <p class="mt-2 text-gray-500">
+        <%= current_user.landlord? ? 'You haven\'t received any rental applications yet.' : 'You haven\'t submitted any rental applications yet.' %>
+      </p>
+      <% unless current_user.landlord? %>
+        <div class="mt-6">
+          <%= link_to 'Browse Properties', properties_path, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
