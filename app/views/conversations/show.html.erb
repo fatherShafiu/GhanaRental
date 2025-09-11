@@ -1,0 +1,52 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+            <span class="text-indigo-600 font-semibold">
+              <%= @conversation.other_participant(current_user).profile&.first_name&.first || 'U' %>
+            </span>
+          </div>
+          <div>
+            <h1 class="text-xl font-semibold text-gray-900">
+              <%= @conversation.other_participant(current_user).profile&.full_name || @conversation.other_participant(current_user).email %>
+            </h1>
+            <% if @conversation.property %>
+              <p class="text-sm text-gray-600">
+                About: <%= link_to @conversation.property.title, @conversation.property, class: "text-indigo-600 hover:text-indigo-800" %>
+              </p>
+            <% end %>
+          </div>
+        </div>
+
+        <%= link_to "Back to Messages", conversations_path, class: "btn btn-secondary" %>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div id="messages_<%= @conversation.id %>" class="space-y-4 mb-6 max-h-96 overflow-y-auto">
+        <% if @conversation.messages.any? %>
+          <% @conversation.messages.each do |message| %>
+            <%= render 'messages/message', message: message %>
+          <% end %>
+        <% else %>
+          <p class="text-gray-500 text-center py-8">No messages yet. Start the conversation!</p>
+        <% end %>
+      </div>
+
+      <!-- Message Form -->
+      <%= form_with model: [@conversation, @message], data: { controller: "message", action: "turbo:submit-end->message#reset" } do |form| %>
+        <div class="flex space-x-4">
+          <%= form.text_area :body, rows: 2,
+                            class: "flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                            placeholder: "Type your message...",
+                            data: { message_target: "input" } %>
+          <%= form.submit "Send", class: "btn btn-primary self-end" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
