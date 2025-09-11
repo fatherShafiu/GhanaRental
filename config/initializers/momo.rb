@@ -4,11 +4,20 @@ require "openssl"
 
 module Momo
   class Configuration
-    attr_accessor :api_key, :user_id, :primary_key, :environment, :callback_url
+    attr_accessor :api_key, :user_id, :primary_key, :environment, :callback_host
 
     def initialize
       @environment = Rails.env.production? ? "production" : "sandbox"
-      @callback_url = Rails.application.routes.url_helpers.momo_callback_url(host: Rails.application.config.action_mailer.default_url_options[:host])
+      @callback_host = Rails.application.config.action_mailer.default_url_options[:host]
+    end
+
+    def callback_url
+      if callback_host
+        Rails.application.routes.url_helpers.momo_callback_url(host: callback_host)
+      else
+        # Fallback for when routes aren't loaded yet
+        "http://localhost:3000/momo/callback"
+      end
     end
   end
 
@@ -18,7 +27,7 @@ module Momo
 
   def self.configure
     self.configuration ||= Configuration.new
-    yield(configuration)
+    yield(configuration) if block_given?
   end
 
   # API Base URLs
@@ -39,11 +48,5 @@ module Momo
   end
 end
 
-# Load configuration from credentials
-Rails.application.reloader.to_prepare do
-  Momo.configure do |config|
-    config.api_key = Rails.application.credentials.momo&.api_key
-    config.user_id = Rails.application.credentials.momo&.user_id
-    config.primary_key = Rails.application.credentials.momo&.primary_key
-  end
-end
+# Load configuration from credentials - defer this to when it's actually needed
+Momo.configure

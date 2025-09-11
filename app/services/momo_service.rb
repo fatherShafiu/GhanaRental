@@ -14,11 +14,12 @@ class MomoService
     response = @conn.post("/v1_0/apiuser") do |req|
       req.headers["X-Reference-Id"] = @config.user_id
       req.headers["Ocp-Apim-Subscription-Key"] = @config.primary_key
-      req.body = { providerCallbackHost: @config.callback_url }.to_json
+      req.body = { providerCallbackHost: @config.callback_host }.to_json
     end
 
     handle_response(response)
   end
+
 
   # Get API key
   def get_api_key
