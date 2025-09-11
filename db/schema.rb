@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_11_111852) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_11_114222) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -129,6 +129,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_11_111852) do
     t.index ["status"], name: "index_properties_on_status"
   end
 
+  create_table "rental_applications", force: :cascade do |t|
+    t.bigint "property_id", null: false
+    t.bigint "tenant_id", null: false
+    t.integer "status", default: 0
+    t.text "message"
+    t.datetime "submitted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["property_id", "tenant_id"], name: "index_rental_applications_on_property_id_and_tenant_id", unique: true
+    t.index ["property_id"], name: "index_rental_applications_on_property_id"
+    t.index ["tenant_id"], name: "index_rental_applications_on_tenant_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -160,4 +173,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_11_111852) do
   add_foreign_key "notifications", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "properties", "users", column: "landlord_id"
+  add_foreign_key "rental_applications", "properties"
+  add_foreign_key "rental_applications", "users", column: "tenant_id"
 end
