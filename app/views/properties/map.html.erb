@@ -1,0 +1,96 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Properties Map</h1>
+    <%= link_to 'List View', properties_path(view: 'list', **filter_params), class: "btn btn-secondary" %>
+  </div>
+
+  <!-- Map Container -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div id="map" class="w-full h-96 rounded-lg"></div>
+  </div>
+
+  <!-- Properties List -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @properties.each do |property| %>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        <% if property.main_image %>
+          <%= image_tag property.main_image, class: "w-full h-48 object-cover" %>
+        <% else %>
+          <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+            <span class="text-gray-500">No image</span>
+          </div>
+        <% end %>
+
+        <div class="p-4">
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">
+            <%= link_to property.title, property, class: "hover:text-indigo-600" %>
+          </h3>
+
+          <p class="text-2xl font-bold text-indigo-600 mb-2">$<%= property.price %></p>
+
+          <div class="flex items-center text-sm text-gray-500 mb-3">
+            <span class="mr-4"><%= property.bedrooms %> beds</span>
+            <span class="mr-4"><%= property.bathrooms %> baths</span>
+            <% if property.square_feet %>
+              <span><%= number_to_human(property.square_feet) %> sqft</span>
+            <% end %>
+          </div>
+
+          <p class="text-sm text-gray-600 mb-3"><%= property.city %>, <%= property.state %></p>
+
+          <%= link_to "View Details", property, class: "btn btn-primary w-full text-center" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Mapbox JavaScript -->
+<%= javascript_include_tag 'https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js' %>
+<%= stylesheet_link_tag 'https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css' %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize map
+    mapboxgl.accessToken = '<%= Rails.application.credentials.mapbox&.access_token || ENV['MAPBOX_ACCESS_TOKEN'] %>';
+
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [<%= @map_properties.first&.longitude || -0.1276 %>, <%= @map_properties.first&.latitude || 51.5072 %>],
+      zoom: 10
+    });
+
+    // Add markers for each property
+    <% @map_properties.each do |property| %>
+      new mapboxgl.Marker()
+        .setLngLat([<%= property.longitude %>, <%= property.latitude %>])
+        .setPopup(
+          new mapboxgl.Popup({ offset: 25 })
+            .setHTML(`
+              <div class="p-2">
+                <h3 class="font-semibold">$<%= property.price %></h3>
+                <p class="text-sm"><%= property.title %></p>
+                <p class="text-xs text-gray-600"><%= property.address %></p>
+                <a href="/properties/<%= property.id %>" class="text-indigo-600 text-sm hover:underline">View Details</a>
+              </div>
+            `)
+        )
+        .addTo(map);
+    <% end %>
+
+    // Add geolocation control
+    map.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserLocation: true
+      })
+    );
+
+    // Add navigation control
+    map.addControl(new mapboxgl.NavigationControl());
+  });
+</script>
