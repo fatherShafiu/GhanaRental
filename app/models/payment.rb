@@ -35,6 +35,12 @@ class Payment < ApplicationRecord
 
   private
 
+  def send_receipt
+  return unless completed?
+
+  NotificationMailer.payment_receipt_email(self).deliver_later
+  end
+
   def generate_transaction_id
     self.transaction_id ||= "PAY#{SecureRandom.hex(10).upcase}"
   end
