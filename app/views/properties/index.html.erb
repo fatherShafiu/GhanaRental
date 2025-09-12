@@ -1,142 +1,46 @@
 <div class="container mx-auto px-4 py-8">
   <div class="flex flex-col md:flex-row justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">Available Properties</h1>
+    <h1 class="text-3xl font-bold text-gray-900">Find Your Perfect Home</h1>
 
     <% if policy(Property).create? %>
       <%= link_to 'Add New Property', new_property_path, class: "btn btn-primary mt-4 md:mt-0" %>
     <% end %>
   </div>
 
-  <!-- Enhanced Filters -->
-  <div class="bg-white rounded-lg shadow p-6 mb-8">
-    <h2 class="text-lg font-semibold mb-4">Find Your Perfect Home</h2>
-    <%= form_with url: properties_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-6 gap-4" do |form| %>
-      <!-- Search -->
-      <div class="md:col-span-2">
-        <%= form.label :search, "Search", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :search, value: params[:search], placeholder: "Enter keywords...", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-      </div>
+  <!-- Search Form -->
+  <%= render 'search_form' %>
 
-      <!-- City -->
-      <div>
-        <%= form.label :city, "City", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :city, value: params[:city], placeholder: "Any city", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-      </div>
-
-      <!-- Property Type -->
-      <div>
-        <%= form.label :property_type, "Type", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :property_type,
-                       options_for_select([["Any Type", ""]] + Property.property_types.keys.map { |k| [k.humanize, k] }, params[:property_type]),
-                       {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-      </div>
-
-      <!-- Bedrooms -->
-      <div>
-        <%= form.label :bedrooms, "Beds", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :bedrooms,
-                       options_for_select([["Any", ""], ["1", 1], ["2", 2], ["3", 3], ["4+", 4]], params[:bedrooms]),
-                       {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-      </div>
-
-      <!-- Sort -->
-      <div>
-        <%= form.label :sort, "Sort By", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :sort,
-                       options_for_select([["Newest", "newest"], ["Price: Low to High", "price_low_high"], ["Price: High to Low", "price_high_low"]], params[:sort]),
-                       {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-      </div>
-
-      <!-- Submit & Reset -->
-      <div class="flex items-end space-x-2">
-        <%= form.submit "Apply Filters", class: "btn btn-primary flex-1" %>
-        <%= link_to "Reset", properties_path, class: "btn btn-secondary" %>
-      </div>
-    <% end %>
-
-    <!-- Price Range Slider (Advanced) -->
-    <div class="mt-4 pt-4 border-t">
-      <h3 class="text-sm font-medium text-gray-700 mb-2">Price Range</h3>
-      <div class="flex items-center space-x-4">
-        <%= number_field_tag :min_price, params[:min_price], placeholder: "Min", class: "block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-        <span class="text-gray-500">to</span>
-        <%= number_field_tag :max_price, params[:max_price], placeholder: "Max", class: "block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-      </div>
-    </div>
-  </div>
-  <!-- Filters -->
-  <div class="bg-white rounded-lg shadow p-6 mb-8">
-    <h2 class="text-lg font-semibold mb-4">Filter Properties</h2>
-    <%= form_with url: properties_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-4 gap-4" do |form| %>
-      <div>
-        <%= form.label :city, "City", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :city, value: params[:city], class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-      </div>
-
-      <div>
-        <%= form.label :property_type, "Type", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :property_type, options_for_select(Property.property_types.keys.map { |k| [k.humanize, k] }, params[:property_type]), { include_blank: "Any" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-      </div>
-
-      <div>
-        <%= form.label :bedrooms, "Bedrooms", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :bedrooms, options_for_select((1..5).map { |n| [n, n] }, params[:bedrooms]), { include_blank: "Any" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
-      </div>
-
-      <div class="flex items-end">
-        <%= form.submit "Filter", class: "btn btn-primary w-full" %>
-      </div>
-    <% end %>
+  <!-- Results Count -->
+  <div class="flex justify-between items-center mb-6">
+    <p class="text-gray-600">
+      Found <span class="font-semibold"><%= @properties.total_count %></span> properties
+      <% if params[:search].present? %>
+        for "<%= params[:search] %>"
+      <% end %>
+    </p>
   </div>
 
   <!-- Properties Grid -->
-  <% if @properties.any? %>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <% @properties.each do |property| %>
-        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-          <% if property.main_image %>
-            <%= image_tag property.main_image, class: "w-full h-48 object-cover" %>
-          <% else %>
-            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-              <span class="text-gray-500">No image</span>
-            </div>
-          <% end %>
+  <%= turbo_frame_tag "properties" do %>
+    <% if @properties.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @properties.each do |property| %>
+          <%= render 'property_card', property: property %>
+        <% end %>
+      </div>
 
-          <div class="p-4">
-            <div class="flex justify-between items-start mb-2">
-              <h3 class="text-xl font-semibold text-gray-900">
-                <%= link_to property.title, property, class: "hover:text-indigo-600" %>
-              </h3>
-              <span class="text-2xl font-bold text-indigo-600">$<%= property.price %></span>
-            </div>
-
-            <p class="text-gray-600 mb-4 line-clamp-2"><%= property.description %></p>
-
-            <div class="flex items-center text-sm text-gray-500 mb-4">
-              <span class="mr-4"><%= property.bedrooms %> beds</span>
-              <span class="mr-4"><%= property.bathrooms %> baths</span>
-              <% if property.square_feet %>
-                <span><%= number_to_human(property.square_feet) %> sqft</span>
-              <% end %>
-            </div>
-
-            <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-500"><%= property.city %>, <%= property.state %></span>
-              <span class="text-sm text-gray-500">Available <%= property.available_from.strftime('%b %d, %Y') %></span>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-
-    <!-- Pagination -->
-    <div class="mt-8">
-      <%== pagy_nav(@pagy) %>
-    </div>
-  <% else %>
-    <div class="text-center py-12">
-      <p class="text-gray-500 text-lg">No properties found matching your criteria.</p>
-      <%= link_to "Clear filters", properties_path, class: "btn btn-secondary mt-4" %>
-    </div>
+      <!-- Pagination -->
+      <div class="mt-8">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">No properties found</h3>
+        <p class="mt-2 text-gray-500">Try adjusting your search criteria or <%= link_to "clear all filters", properties_path, class: "text-indigo-600 hover:text-indigo-800" %>.</p>
+      </div>
+    <% end %>
   <% end %>
 </div>
