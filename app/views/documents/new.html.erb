@@ -1,0 +1,22 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h1 class="text-2xl font-bold text-gray-900 mb-6">
+        Upload Documents for <%= @rental_application.property.title %>
+      </h1>
+
+      <%= render 'form' %>
+
+      <!-- Document Requirements -->
+      <div class="mt-8 bg-blue-50 border border-blue-200 rounded-md p-4">
+        <h3 class="text-lg font-semibold text-blue-900 mb-2">Recommended Documents</h3>
+        <ul class="list-disc list-inside text-blue-800 space-y-1">
+          <li>Government-issued ID (Passport, Driver's License, National ID)</li>
+          <li>Proof of income (Pay stubs, employment letter, bank statements)</li>
+          <li>Previous rental history references</li>
+          <li>Credit report (optional but recommended)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
