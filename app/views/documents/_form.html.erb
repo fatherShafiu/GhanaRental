@@ -1,0 +1,38 @@
+<%= form_with model: [@rental_application, @document], local: true, html: { class: "space-y-6" } do |form| %>
+  <% if @document.errors.any? %>
+    <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+      <h2 class="text-red-800 font-semibold mb-2">
+        <%= pluralize(@document.errors.count, "error") %> prohibited this document from being saved:
+      </h2>
+      <ul class="list-disc list-inside text-red-600">
+        <% @document.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-6">
+    <%= form.label :document_type, "Document Type *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= form.select :document_type,
+                   Document.document_types.keys.map { |k| [k.humanize, k] },
+                   { include_blank: "Select Document Type" },
+                   class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+  </div>
+
+  <div class="mb-6">
+    <%= form.label :files, "Files *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= form.file_field :files,
+                       multiple: true,
+                       accept: "application/pdf,image/jpeg,image/png,image/jpg",
+                       class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+    <p class="mt-1 text-sm text-gray-500">
+      Upload PDF, JPEG, or PNG files (max 5MB each). You can select multiple files.
+    </p>
+  </div>
+
+  <div class="flex space-x-4">
+    <%= link_to 'Cancel', rental_application_path(@rental_application), class: "btn btn-secondary" %>
+    <%= form.submit "Upload Documents", class: "btn btn-primary" %>
+  </div>
+<% end %>
