@@ -11,39 +11,19 @@
   <%= render 'search_form' %>
 
   <!-- Results Count -->
-<!-- Results Count with Turbo Frame -->
-<div class="flex justify-between items-center mb-6">
-  <%= turbo_frame_tag "results_count" do %>
-    <p class="text-gray-600">
-      Found <span class="font-semibold"><%= @pagy.count %></span> properties
-      <% if params[:search].present? %>
-        for "<%= params[:search] %>"
-      <% end %>
-    </p>
-  <% end %>
-</div>
+  <div class="flex justify-between items-center mb-6">
+    <%= turbo_frame_tag "results_count" do %>
+      <p class="text-gray-600">
+         Found <span class="font-semibold"><%= @pagy.count %></span> properties
+        <% if params[:search].present? %>
+          for "<%= params[:search] %>"
+        <% end %>
+      </p>
+    <% end %>
+  </div>
 
   <!-- Properties Grid wrapped in Turbo Frame -->
   <%= turbo_frame_tag "properties" do %>
-    <% if @properties.any? %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <% @properties.each do |property| %>
-          <%= render 'property_card', property: property %>
-        <% end %>
-      </div>
-
-      <!-- Pagination -->
-      <div class="mt-8">
-        <%== pagy_nav(@pagy) %>
-      </div>
-    <% else %>
-      <div class="text-center py-12">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <h3 class="mt-4 text-lg font-medium text-gray-900">No properties found</h3>
-        <p class="mt-2 text-gray-500">Try adjusting your search criteria or <%= link_to "clear all filters", properties_path, class: "text-indigo-600 hover:text-indigo-800" %>.</p>
-      </div>
-    <% end %>
+    <%= render 'properties_list', properties: @properties, pagy: @pagy %>
   <% end %>
 </div>

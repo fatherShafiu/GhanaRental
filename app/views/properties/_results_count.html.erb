@@ -1,0 +1,6 @@
+<p class="text-gray-600">
+  Found <span class="font-semibold"><%= properties.total_count %></span> properties
+  <% if params[:search].present? %>
+    for "<%= params[:search] %>"
+  <% end %>
+</p>

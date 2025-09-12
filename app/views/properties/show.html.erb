@@ -1,3 +1,5 @@
+<%= turbo_frame_tag "properties" do %>
+
 <div class="container mx-auto px-4 py-8">
   <% if @property.images.attached? %>
     <!-- Image Gallery -->
@@ -174,3 +176,4 @@
     </div>
   <% end %>
 </div>
+<% end %>

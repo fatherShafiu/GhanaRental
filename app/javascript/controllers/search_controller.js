@@ -3,12 +3,17 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["advanced"]
 
+  connect() {
+    this.timeout = null
+  }
+
   toggleAdvanced() {
     this.advancedTarget.classList.toggle('hidden')
   }
 
   submit(event) {
-    // Auto-submit form when selection changes
+    // Prevent default form submission for Turbo
+    event.preventDefault()
     this.element.requestSubmit()
   }
 
@@ -17,6 +22,6 @@ export default class extends Controller {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       this.element.requestSubmit()
-    }, 500) // Increased debounce time to 500ms
+    }, 500)
   }
 }
