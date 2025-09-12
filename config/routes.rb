@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
   # Rental applications routes
   resources :rental_applications, only: [ :index, :show, :update, :destroy ]
+  resources :documents, only: [ :index, :new, :create, :show, :destroy ]
   resources :properties do
     resources :rental_applications, only: [ :new, :create ]
   end
