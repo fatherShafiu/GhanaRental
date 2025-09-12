@@ -78,8 +78,21 @@ Rails.application.routes.draw do
   # ================================
   get "dashboard", to: "dashboards#show"
 
+# ================================
+# Admin routes
+# ================================
+# Additional routes will be added here as we progress
+namespace :admin do
+  resources :users, only: [ :index, :show, :edit, :update ]
+  resources :settings, only: [ :index, :update ]
+  resources :reports, only: [ :index ]
+  end
+
+
+
   # ================================
   # Future routes
   # ================================
   # Additional routes will be added here as we progress
+  #
 end
