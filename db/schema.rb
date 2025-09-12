@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_11_184906) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_12_112920) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_11_184906) do
     t.index ["recipient_id"], name: "index_conversations_on_recipient_id"
     t.index ["sender_id", "recipient_id", "property_id"], name: "idx_on_sender_id_recipient_id_property_id_7165f21d9a", unique: true
     t.index ["sender_id"], name: "index_conversations_on_sender_id"
+  end
+
+  create_table "documents", force: :cascade do |t|
+    t.bigint "rental_application_id", null: false
+    t.bigint "user_id", null: false
+    t.string "document_type"
+    t.text "file_data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rental_application_id"], name: "index_documents_on_rental_application_id"
+    t.index ["user_id"], name: "index_documents_on_user_id"
   end
 
   create_table "favorites", force: :cascade do |t|
@@ -178,6 +189,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_11_184906) do
   add_foreign_key "conversations", "properties"
   add_foreign_key "conversations", "users", column: "recipient_id"
   add_foreign_key "conversations", "users", column: "sender_id"
+  add_foreign_key "documents", "rental_applications"
+  add_foreign_key "documents", "users"
   add_foreign_key "favorites", "properties"
   add_foreign_key "favorites", "users"
   add_foreign_key "messages", "conversations"

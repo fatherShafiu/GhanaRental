@@ -17,6 +17,9 @@ class RentalApplication < ApplicationRecord
   after_update_commit :notify_tenant_of_status_change
 
   has_one :payment, dependent: :destroy
+  has_many :documents, dependent: :destroy
+
+
 
   after_update :create_payment_on_approval, if: :saved_change_to_status?
 
@@ -36,7 +39,26 @@ class RentalApplication < ApplicationRecord
       message: "Your application was approved! Please make your first rent payment of $#{property.price}."
     )
   end
+  # Add validation for documents
+  validate :validate_required_documents, on: :create
 
+  def validate_required_documents
+    return if documents.any? { |doc| doc.id_proof? && doc.files.attached? }
+    errors.add(:base, "ID proof is required")
+  end
+
+  def document_status
+    required_types = [ :id_proof, :proof_of_income ]
+    submitted_types = documents.map(&:document_type).map(&:to_sym)
+
+    if required_types.all? { |type| submitted_types.include?(type) }
+      "complete"
+    elsif documents.any?
+      "partial"
+    else
+      "none"
+    end
+  end
   private
 
   def set_submitted_at
