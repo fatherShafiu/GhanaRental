@@ -17,15 +17,16 @@ class Message < ApplicationRecord
   private
 
 def notify_recipient
-  recipient = conversation.other_participant(user)
-
   # Create notification
+  recipient = conversation.other_participant(user)
   Notification.create(
     user: recipient,
     notifiable: self,
-    message: "New message from #{user.profile&.full_name || user.email}#{conversation.property ? " about #{conversation.property.title}" : ''}"
+    message: "New message from #{user.profile&.full_name || user.email}"
   )
 
+  # Send email
+  NotificationMailer.new_message_email(self).deliver_later
   # Broadcast notification count update
   broadcast_update_to recipient,
                      target: "notifications_count",
