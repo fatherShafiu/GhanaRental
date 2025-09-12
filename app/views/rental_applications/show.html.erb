@@ -43,7 +43,44 @@
           <p class="text-gray-700"><%= @application.message %></p>
         </div>
       </div>
+      <!-- Add this after the message section -->
+<div class="border-t pt-6 mb-6">
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">Documents</h2>
 
+  <div class="mb-4">
+    <span class="text-sm font-medium text-gray-700">Document Status: </span>
+    <span class="px-2 py-1 text-xs font-semibold rounded-full
+      <%= @application.document_status == 'complete' ? 'bg-green-100 text-green-800' :
+          @application.document_status == 'partial' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' %>">
+      <%= @application.document_status.humanize %>
+    </span>
+  </div>
+
+  <% if @application.documents.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <% @application.documents.each do |document| %>
+        <div class="bg-gray-50 rounded-lg p-3">
+          <h4 class="font-medium text-gray-900"><%= document.display_name %></h4>
+          <div class="mt-2 space-y-1">
+            <% document.files.each do |file| %>
+              <div class="flex items-center justify-between">
+                <%= link_to file.filename, rails_blob_path(file, disposition: 'attachment'),
+                          class: "text-indigo-600 hover:text-indigo-800 text-sm" %>
+                <span class="text-xs text-gray-500"><%= number_to_human_size(file.byte_size) %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if policy(Document.new(rental_application: @application)).create? %>
+    <%= link_to 'Upload Documents', new_rental_application_document_path(@application), class: "btn btn-secondary" %>
+  <% end %>
+
+  <%= link_to 'View All Documents', rental_application_documents_path(@application), class: "btn btn-secondary ml-2" %>
+</div>
       <!-- Actions -->
       <div class="border-t pt-6">
         <% if current_user.landlord? && @application.pending? %>
