@@ -21,6 +21,8 @@ class User < ApplicationRecord
   has_many :messages, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
+  after_create_commit :send_welcome_email
+
   def favorited?(property)
     favorites.exists?(property: property)
   end
@@ -38,6 +40,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def send_welcome_email
+  NotificationMailer.welcome_email(self).deliver_later
+  end
 
   def create_profile
     Profile.create(user: self)
