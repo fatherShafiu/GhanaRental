@@ -73,3 +73,6 @@ gem "faraday", "~> 2.13"
 gem "dotenv-rails", "~> 3.1"
 
 gem "geocoder", "~> 1.8"
+
+gem "chartkick", "~> 5.2"
+gem "groupdate", "~> 6.7"
