@@ -67,21 +67,30 @@ class RentalApplication < ApplicationRecord
 
 
 
+
 def notify_landlord
+  # Create notification
   Notification.create(
     user: property.landlord,
     notifiable: self,
     message: "New rental application from #{tenant.profile&.full_name || tenant.email} for #{property.title}"
   )
+
+  # Send email
+  NotificationMailer.landlord_application_notification(self).deliver_later
 end
 
 def notify_tenant_of_status_change
   return unless saved_change_to_status?
 
+  # Create notification
   Notification.create(
     user: tenant,
     notifiable: self,
     message: "Your application for #{property.title} has been #{status}."
   )
+
+  # Send email
+  NotificationMailer.application_status_email(self).deliver_later
 end
 end
