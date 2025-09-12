@@ -76,3 +76,7 @@ gem "geocoder", "~> 1.8"
 
 gem "chartkick", "~> 5.2"
 gem "groupdate", "~> 6.7"
+
+gem "rack-attack", "~> 6.7"
+
+gem "skylight", "~> 6.0"

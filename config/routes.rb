@@ -94,5 +94,6 @@ namespace :admin do
   # Future routes
   # ================================
   # Additional routes will be added here as we progress
-  #
+  get "/privacy-policy", to: "pages#privacy_policy"
+  get "/terms-of-service", to: "pages#terms_of_service"
 end
