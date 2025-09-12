@@ -71,3 +71,5 @@ gem "pagy", "~> 9.4"
 
 gem "faraday", "~> 2.13"
 gem "dotenv-rails", "~> 3.1"
+
+gem "geocoder", "~> 1.8"

@@ -39,6 +39,58 @@ class Property < ApplicationRecord
   scope :by_city, ->(city) { where("LOWER(city) LIKE ?", "%#{city.downcase}%") }
   scope :by_price_range, ->(min, max) { where(price: min..max) }
 
+  # Geocoding
+  geocoded_by :full_address
+  after_validation :geocode, if: ->(obj) { obj.address_changed? || obj.city_changed? || obj.state_changed? || obj.zip_code_changed? }
+
+  # Scopes for filtering
+  scope :by_price_range, ->(min, max) { where(price: min..max) }
+  scope :by_bedrooms, ->(min_bedrooms) { where("bedrooms >= ?", min_bedrooms) }
+  scope :by_bathrooms, ->(min_bathrooms) { where("bathrooms >= ?", min_bathrooms) }
+  scope :by_square_feet, ->(min_sqft) { where("square_feet >= ?", min_sqft) }
+  scope :by_availability, ->(date) { where("available_from <= ?", date) }
+  scope :near_location, ->(latitude, longitude, radius = 10) {
+    where.not(latitude: nil, longitude: nil)
+         .near([ latitude, longitude ], radius, units: :km)
+  }
+
+  # Search methods
+  def self.search(query)
+    return all if query.blank?
+
+    where(
+      "LOWER(title) LIKE :query OR LOWER(description) LIKE :query OR LOWER(city) LIKE :query OR LOWER(address) LIKE :query",
+      query: "%#{query.downcase}%"
+    )
+  end
+
+  def self.filter(filters = {})
+    properties = all
+
+    # Apply filters
+    properties = properties.by_price_range(filters[:min_price], filters[:max_price]) if filters[:min_price].present? && filters[:max_price].present?
+    properties = properties.by_bedrooms(filters[:min_bedrooms]) if filters[:min_bedrooms].present?
+    properties = properties.by_bathrooms(filters[:min_bathrooms]) if filters[:min_bathrooms].present?
+    properties = properties.by_square_feet(filters[:min_sqft]) if filters[:min_sqft].present?
+    properties = properties.by_availability(filters[:available_by]) if filters[:available_by].present?
+    properties = properties.where(property_type: filters[:property_type]) if filters[:property_type].present?
+    properties = properties.where(furnished: filters[:furnished]) if filters[:furnished].present?
+    properties = properties.where(pets_allowed: filters[:pets_allowed]) if filters[:pets_allowed].present?
+
+    # Location-based filtering
+    if filters[:latitude].present? && filters[:longitude].present?
+      properties = properties.near_location(
+        filters[:latitude],
+        filters[:longitude],
+        filters[:radius] || 10
+      )
+    end
+
+    properties
+  end
+
+
+
   # Geocoding - Commented out for now, will implement later
   # geocoded_by :full_address
   # after_validation :geocode, if: ->(obj){ obj.address_changed? || obj.city_changed? || obj.state_changed? }
