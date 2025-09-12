@@ -11,16 +11,19 @@
   <%= render 'search_form' %>
 
   <!-- Results Count -->
-  <div class="flex justify-between items-center mb-6">
+<!-- Results Count with Turbo Frame -->
+<div class="flex justify-between items-center mb-6">
+  <%= turbo_frame_tag "results_count" do %>
     <p class="text-gray-600">
-      Found <span class="font-semibold"><%= @properties.total_count %></span> properties
+      Found <span class="font-semibold"><%= @pagy.count %></span> properties
       <% if params[:search].present? %>
         for "<%= params[:search] %>"
       <% end %>
     </p>
-  </div>
+  <% end %>
+</div>
 
-  <!-- Properties Grid -->
+  <!-- Properties Grid wrapped in Turbo Frame -->
   <%= turbo_frame_tag "properties" do %>
     <% if @properties.any? %>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

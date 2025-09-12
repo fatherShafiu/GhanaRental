@@ -1,11 +1,13 @@
 <%= form_with url: properties_path, method: :get, local: true, data: { controller: "search", turbo_frame: "properties" } do |form| %>
+  <!-- Keep all your existing form fields -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <!-- Search Input -->
     <div>
       <%= form.label :search, "Keywords", class: "block text-sm font-medium text-gray-700 mb-1" %>
       <%= form.text_field :search, value: params[:search],
                          placeholder: "Address, city, features...",
-                         class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                         class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                         data: { action: "input->search#search" } %>
     </div>
 
     <!-- Property Type -->
@@ -14,7 +16,8 @@
       <%= form.select :property_type,
                      options_for_select([["Any Type", ""]] + Property.property_types.keys.map { |k| [k.humanize, k] }, params[:property_type]),
                      {},
-                     class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                     class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                     data: { action: "change->search#submit" } %>
     </div>
 
     <!-- Price Range -->
@@ -22,14 +25,16 @@
       <%= form.label :min_price, "Min Price", class: "block text-sm font-medium text-gray-700 mb-1" %>
       <%= form.number_field :min_price, value: params[:min_price],
                            placeholder: "Min price",
-                           class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                           class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                           data: { action: "input->search#search" } %>
     </div>
 
     <div>
       <%= form.label :max_price, "Max Price", class: "block text-sm font-medium text-gray-700 mb-1" %>
       <%= form.number_field :max_price, value: params[:max_price],
                            placeholder: "Max price",
-                           class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                           class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                           data: { action: "input->search#search" } %>
     </div>
   </div>
 
@@ -51,7 +56,8 @@
         <%= form.select :min_bedrooms,
                        options_for_select([["Any", ""], ["1+", 1], ["2+", 2], ["3+", 3], ["4+", 4], ["5+", 5]], params[:min_bedrooms]),
                        {},
-                       class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                       class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                       data: { action: "change->search#submit" } %>
       </div>
 
       <!-- Bathrooms -->
@@ -60,7 +66,8 @@
         <%= form.select :min_bathrooms,
                        options_for_select([["Any", ""], ["1+", 1], ["2+", 2], ["3+", 3]], params[:min_bathrooms]),
                        {},
-                       class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                       class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                       data: { action: "change->search#submit" } %>
       </div>
 
       <!-- Square Feet -->
@@ -68,14 +75,16 @@
         <%= form.label :min_sqft, "Min Size (sqft)", class: "block text-sm font-medium text-gray-700 mb-1" %>
         <%= form.number_field :min_sqft, value: params[:min_sqft],
                              placeholder: "Min square feet",
-                             class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                             class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                             data: { action: "input->search#search" } %>
       </div>
 
       <!-- Availability -->
       <div>
         <%= form.label :available_by, "Available By", class: "block text-sm font-medium text-gray-700 mb-1" %>
         <%= form.date_field :available_by, value: params[:available_by],
-                           class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                           class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                           data: { action: "change->search#submit" } %>
       </div>
 
       <!-- Amenities -->
@@ -84,7 +93,8 @@
         <%= form.select :furnished,
                        options_for_select([["Any", ""], ["Furnished", "true"], ["Unfurnished", "false"]], params[:furnished]),
                        {},
-                       class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                       class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                       data: { action: "change->search#submit" } %>
       </div>
 
       <div>
@@ -92,7 +102,8 @@
         <%= form.select :pets_allowed,
                        options_for_select([["Any", ""], ["Yes", "true"], ["No", "false"]], params[:pets_allowed]),
                        {},
-                       class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+                       class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                       data: { action: "change->search#submit" } %>
       </div>
     </div>
   </div>

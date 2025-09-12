@@ -8,7 +8,7 @@ export default class extends Controller {
   }
 
   submit(event) {
-    // Auto-submit form when sort selection changes
+    // Auto-submit form when selection changes
     this.element.requestSubmit()
   }
 
@@ -17,6 +17,6 @@ export default class extends Controller {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       this.element.requestSubmit()
-    }, 300)
+    }, 500) // Increased debounce time to 500ms
   }
 }

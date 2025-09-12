@@ -1,38 +1,56 @@
 Rails.application.routes.draw do
-  # Devise routes with custom controllers
+  # ================================
+  # Authentication
+  # ================================
   devise_for :users, controllers: {
     registrations: "users/registrations",
     sessions: "users/sessions"
   }
 
-  # Root path
+  # ================================
+  # Root
+  # ================================
   root "properties#index"
 
-  # Properties routes
+  # ================================
+  # Properties
+  # ================================
   resources :properties do
     member do
       patch :publish
       patch :archive
-      post :toggle_favorite
+      post  :toggle_favorite
       delete :purge_image
     end
     collection do
       get :my_properties
       get :favorites
     end
-  end
-   resources :conversations, only: [ :index, :show, :create ] do
-    resources :messages, only: :create
-  end
 
-  # Rental applications routes
-  resources :rental_applications, only: [ :index, :show, :update, :destroy ]
-  resources :documents, only: [ :index, :new, :create, :show, :destroy ]
-  resources :properties do
+    # Rental applications nested under properties
     resources :rental_applications, only: [ :new, :create ]
   end
 
-  # Notifications routes
+  # ================================
+  # Rental Applications (global)
+  # ================================
+  resources :rental_applications, only: [ :index, :show, :update, :destroy ]
+
+  # ================================
+  # Documents
+  # ================================
+  resources :documents, only: [ :index, :new, :create, :show, :destroy ]
+
+  # ================================
+  # Conversations & Messages
+  # ================================
+  resources :conversations, only: [ :index, :show, :create ] do
+    resources :messages, only: :create
+  end
+
+  # ================================
+  # Notifications
+  # ================================
   resources :notifications, only: [ :index ] do
     member do
       patch :mark_as_read
@@ -42,17 +60,26 @@ Rails.application.routes.draw do
     end
   end
 
-    resources :payments, only: [ :index, :show ] do
+  # ================================
+  # Payments
+  # ================================
+  resources :payments, only: [ :index, :show ] do
     member do
       post :process_payment
-      get :status
+      get  :status
     end
   end
 
   # Momo callback
   post "/momo/callback", to: "payments#callback"
-  # User dashboard
+
+  # ================================
+  # Dashboard
+  # ================================
   get "dashboard", to: "dashboards#show"
 
+  # ================================
+  # Future routes
+  # ================================
   # Additional routes will be added here as we progress
 end
