@@ -1,22 +1,172 @@
 <div class="container mx-auto px-4 py-8">
   <h1 class="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
 
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+
   <!-- Stats Overview -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Total Users</h3>
-      <p class="text-3xl font-bold text-indigo-600"><%= User.count %></p>
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-indigo-100 text-indigo-600 mr-4">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-1">Total Users</h3>
+          <p class="text-3xl font-bold text-indigo-600"><%= User.count %></p>
+          <p class="text-sm text-gray-500">
+            <%= User.where(created_at: Time.current.all_month).count %> this month
+          </p>
+        </div>
+      </div>
     </div>
+
     <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Total Properties</h3>
-      <p class="text-3xl font-bold text-indigo-600"><%= Property.count %></p>
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-2m-9 0H5m2 0h2M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-1">Total Properties</h3>
+          <p class="text-3xl font-bold text-green-600"><%= Property.count %></p>
+          <p class="text-sm text-gray-500">
+            <%= Property.where(created_at: Time.current.all_month).count %> this month
+          </p>
+        </div>
+      </div>
     </div>
+
     <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Pending Approval</h3>
-      <p class="text-3xl font-bold text-indigo-600"><%= @pending_properties %></p>
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-1">Applications</h3>
+          <p class="text-3xl font-bold text-yellow-600"><%= RentalApplication.count %></p>
+          <p class="text-sm text-gray-500">
+            <%= RentalApplication.pending.count %> pending
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-1">Revenue</h3>
+          <p class="text-3xl font-bold text-blue-600">₵<%= Payment.completed.sum(:amount) %></p>
+          <p class="text-sm text-gray-500">
+            <%= Payment.where(created_at: Time.current.all_month).completed.count %> payments this month
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- User Growth Chart -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">User Growth</h2>
+      <div class="h-64">
+        <%= line_chart User.group_by_month(:created_at).count,
+                      colors: ["#4f46e5"],
+                      library: {
+                        title: "Users by Month",
+                        backgroundColor: "transparent"
+                      } %>
+      </div>
+    </div>
+
+    <!-- Property Types Chart -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Property Types</h2>
+      <div class="h-64">
+        <%= pie_chart Property.group(:property_type).count,
+                     colors: ["#4f46e5", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"],
+                     library: {
+                       backgroundColor: "transparent"
+                     } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Properties -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Recent Properties</h2>
+      <% if @recent_properties.any? %>
+        <div class="space-y-4">
+          <% @recent_properties.each do |property| %>
+            <div class="flex items-center justify-between py-2 border-b border-gray-100">
+              <div class="flex items-center">
+                <% if property.images.attached? %>
+                  <%= image_tag property.images.first, class: "w-10 h-10 rounded object-cover mr-3" %>
+                <% end %>
+                <div>
+                  <p class="font-medium text-gray-900"><%= property.title %></p>
+                  <p class="text-sm text-gray-500"><%= property.landlord.profile&.full_name %></p>
+                </div>
+              </div>
+              <span class="text-sm text-gray-500"><%= time_ago_in_words(property.created_at) %> ago</span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-gray-500">No recent properties.</p>
+      <% end %>
+    </div>
+
+    <!-- Recent Applications -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Recent Applications</h2>
+      <% if @recent_applications.any? %>
+        <div class="space-y-4">
+          <% @recent_applications.each do |application| %>
+            <div class="flex items-center justify-between py-2 border-b border-gray-100">
+              <div>
+                <p class="font-medium text-gray-900"><%= application.property.title %></p>
+                <p class="text-sm text-gray-500">
+                  by <%= application.tenant.profile&.full_name || application.tenant.email %>
+                </p>
+              </div>
+              <span class="px-2 py-1 text-xs font-semibold rounded-full
+                <%= application_status_class(application.status) %>">
+                <%= application.status.humanize %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-gray-500">No recent applications.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="mt-8 bg-gray-50 rounded-lg p-6">
+    <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
+    <div class="flex flex-wrap gap-4">
+      <%= link_to "Manage Users", admin_users_path, class: "btn btn-primary" %>
+      <%= link_to "View All Properties", properties_path, class: "btn btn-secondary" %>
+      <%= link_to "View Applications", rental_applications_path, class: "btn btn-secondary" %>
+      <%= link_to "System Settings", admin_settings_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+</div>
   <!-- Recent Properties -->
   <div class="bg-white rounded-lg shadow p-6 mb-8">
     <h2 class="text-xl font-semibold mb-4">Recent Properties</h2>
