@@ -1,47 +1,112 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Properties Map</h1>
-    <%= link_to 'List View', properties_path(view: 'list', **filter_params), class: "btn btn-secondary" %>
-  </div>
+<%= turbo_frame_tag "properties" do %>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+      <div>
+        <h1 class="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          Explore Properties
+        </h1>
+        <p class="text-lg text-gray-600">Discover your perfect home on our interactive map</p>
+      </div>
+      <%= link_to properties_path(params.permit(:city, :property_type, :max_price, :min_bedrooms).merge(view: 'list')),
+                class: "btn-secondary-lg flex items-center group mt-4 md:mt-0" do %>
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+        </svg>
+        List View
+      <% end %>
+    </div>
 
-  <!-- Map Container -->
-  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <div id="map" class="w-full h-96 rounded-lg"></div>
-  </div>
+    <!-- Map Container -->
+    <div class="bg-white rounded-2xl shadow-2xl p-6 mb-8 border border-gray-100">
+      <div class="flex items-center mb-4">
+        <svg class="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        <h2 class="text-xl font-bold text-gray-900">Interactive Property Map</h2>
+      </div>
+      <div id="map" class="w-full h-96 rounded-xl overflow-hidden shadow-lg"></div>
+    </div>
 
-  <!-- Properties List -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <% @properties.each do |property| %>
-      <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-        <% if property.main_image %>
-          <%= image_tag property.main_image, class: "w-full h-48 object-cover" %>
-        <% else %>
-          <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-            <span class="text-gray-500">No image</span>
+    <!-- Properties Grid -->
+    <div class="mb-8">
+      <div class="flex items-center mb-6">
+        <svg class="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+        </svg>
+        <h2 class="text-2xl font-bold text-gray-900">Available Properties</h2>
+        <span class="ml-3 bg-indigo-100 text-indigo-800 text-sm font-semibold px-3 py-1 rounded-full">
+          <%= @properties.count %> listings
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @properties.each do |property| %>
+          <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 group">
+            <!-- Image -->
+            <div class="relative overflow-hidden">
+              <% if property.main_image %>
+                <%= image_tag property.main_image, class: "w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" %>
+              <% else %>
+                <div class="w-full h-48 bg-gradient-to-r from-indigo-100 to-purple-100 flex items-center justify-center">
+                  <svg class="w-12 h-12 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                  </svg>
+                </div>
+              <% end %>
+              <div class="absolute top-4 left-4 bg-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                <%= property.property_type&.humanize || 'Property' %>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-5">
+              <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors duration-200">
+                <%= link_to property.title, property %>
+              </h3>
+
+              <div class="flex items-center text-gray-600 mb-3">
+                <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="text-sm"><%= property.city %>, <%= property.state %></span>
+              </div>
+
+              <div class="text-2xl font-bold text-indigo-600 mb-4">Gh₵<%= number_with_delimiter(property.price, delimiter: ',') %></div>
+
+              <!-- Features -->
+              <div class="flex justify-between items-center mb-4 text-sm text-gray-500">
+                <div class="flex items-center">
+                  <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                  </svg>
+                  <%= property.bedrooms %> beds
+                </div>
+                <div class="flex items-center">
+                  <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  <%= property.bathrooms %> baths
+                </div>
+                <% if property.square_feet %>
+                  <div class="flex items-center">
+                    <svg class="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"></path>
+                    </svg>
+                    <%= number_to_human(property.square_feet) %> sqft
+                  </div>
+                <% end %>
+              </div>
+
+              <%= link_to "View Details", property, class: "w-full btn-primary-lg flex items-center justify-center group" %>
+            </div>
           </div>
         <% end %>
-
-        <div class="p-4">
-          <h3 class="text-xl font-semibold text-gray-900 mb-2">
-            <%= link_to property.title, property, class: "hover:text-indigo-600" %>
-          </h3>
-
-          <p class="text-2xl font-bold text-indigo-600 mb-2">Gh₵<%= property.price %></p>
-
-          <div class="flex items-center text-sm text-gray-500 mb-3">
-            <span class="mr-4"><%= property.bedrooms %> beds</span>
-            <span class="mr-4"><%= property.bathrooms %> baths</span>
-            <% if property.square_feet %>
-              <span><%= number_to_human(property.square_feet) %> sqft</span>
-            <% end %>
-          </div>
-
-          <p class="text-sm text-gray-600 mb-3"><%= property.city %>, <%= property.state %></p>
-
-          <%= link_to "View Details", property, class: "btn btn-primary w-full text-center" %>
-        </div>
       </div>
-    <% end %>
+    </div>
   </div>
 </div>
 
@@ -61,18 +126,39 @@
       zoom: 10
     });
 
+    // Custom marker element
+    const createCustomMarker = (price) => {
+      const el = document.createElement('div');
+      el.className = 'custom-marker';
+      el.innerHTML = `
+        <div class="marker-content bg-indigo-600 text-white font-bold px-2 py-1 rounded-full shadow-lg border-2 border-white">
+          Gh₵${price.toLocaleString()}
+        </div>
+      `;
+      return el;
+    };
+
     // Add markers for each property
     <% @map_properties.each do |property| %>
-      new mapboxgl.Marker()
+      new mapboxgl.Marker(createCustomMarker(<%= property.price %>))
         .setLngLat([<%= property.longitude %>, <%= property.latitude %>])
         .setPopup(
           new mapboxgl.Popup({ offset: 25 })
             .setHTML(`
-              <div class="p-2">
-                <h3 class="font-semibold">Gh₵<%= property.price %></h3>
-                <p class="text-sm"><%= property.title %></p>
-                <p class="text-xs text-gray-600"><%= property.address %></p>
-                <a href="/properties/<%= property.id %>" class="text-indigo-600 text-sm hover:underline">View Details</a>
+              <div class="property-popup p-3 max-w-xs">
+                <div class="font-bold text-lg text-indigo-700 mb-1">Gh₵<%= number_with_delimiter(property.price, delimiter: ',') %></div>
+                <h4 class="font-semibold text-gray-900 mb-2"><%= property.title %></h4>
+                <p class="text-sm text-gray-600 mb-2"><%= property.address %></p>
+                <div class="flex text-xs text-gray-500 mb-3">
+                  <span class="mr-3"><%= property.bedrooms %> beds</span>
+                  <span class="mr-3"><%= property.bathrooms %> baths</span>
+                  <% if property.square_feet %>
+                    <span><%= number_to_human(property.square_feet) %> sqft</span>
+                  <% end %>
+                </div>
+                <a href="/properties/<%= property.id %>" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-3 py-1 rounded transition-colors">
+                  View Details
+                </a>
               </div>
             `)
         )
@@ -92,5 +178,35 @@
 
     // Add navigation control
     map.addControl(new mapboxgl.NavigationControl());
+
+    // Add fullscreen control
+    map.addControl(new mapboxgl.FullscreenControl());
   });
 </script>
+
+<style>
+  .custom-marker {
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .custom-marker:hover {
+    transform: scale(1.1);
+  }
+
+  .marker-content {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .mapboxgl-popup-content {
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .mapboxgl-popup-close-button {
+    font-size: 20px;
+    padding: 6px 8px;
+  }
+</style>
+<% end %>
