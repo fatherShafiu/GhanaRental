@@ -1,29 +1,53 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="flex flex-col md:flex-row justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">Find Your Perfect Home</h1>
-
-    <% if policy(Property).create? %>
-      <%= link_to 'Add New Property', new_property_path, class: "btn btn-primary mt-4 md:mt-0" %>
-    <% end %>
-  </div>
-
-  <!-- Search Form -->
-  <%= render 'search_form' %>
-
-  <!-- Results Count -->
-  <div class="flex justify-between items-center mb-6">
-    <%= turbo_frame_tag "results_count" do %>
-      <p class="text-gray-600">
-         Found <span class="font-semibold"><%= @pagy.count %></span> properties
-        <% if params[:search].present? %>
-          for "<%= params[:search] %>"
-        <% end %>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header Section -->
+    <div class="text-center mb-12">
+      <h1 class="text-5xl font-bold text-gray-900 mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+        Discover Your Dream Home
+      </h1>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Find the perfect property that matches your lifestyle and budget
       </p>
+    </div>
+
+    <!-- Search Form Card -->
+    <div class="bg-white rounded-2xl shadow-2xl p-8 mb-12 border border-gray-100">
+      <%= render 'search_form' %>
+    </div>
+
+    <!-- Results Header -->
+    <div class="flex flex-col lg:flex-row justify-between items-center mb-8 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <%= turbo_frame_tag "results_count" do %>
+        <div class="flex items-center space-x-4">
+          <div class="p-3 bg-indigo-100 rounded-2xl">
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-2m-9 0H5m2 0h2M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-gray-900">
+              <span class="text-indigo-600"><%= @pagy.count %></span> Properties Found
+            </p>
+            <% if params[:search].present? %>
+              <p class="text-gray-600">for "<span class="font-semibold"><%= params[:search] %></span>"</p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if policy(Property).create? %>
+        <%= link_to new_property_path, class: "btn-primary-lg mt-4 lg:mt-0 group" do %>
+          <svg class="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          List Your Property
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Properties Grid -->
+    <%= turbo_frame_tag "properties" do %>
+      <%= render 'properties_list', properties: @properties, pagy: @pagy %>
     <% end %>
   </div>
-
-  <!-- Properties Grid wrapped in Turbo Frame -->
-  <%= turbo_frame_tag "properties" do %>
-    <%= render 'properties_list', properties: @properties, pagy: @pagy %>
-  <% end %>
 </div>

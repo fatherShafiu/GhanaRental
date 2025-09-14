@@ -1,32 +1,92 @@
-<div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-  <% if property.main_image %>
-    <%= image_tag property.main_image, class: "w-full h-48 object-cover" %>
-  <% else %>
-    <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-      <span class="text-gray-500">No image</span>
+<div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-indigo-200 hover:scale-[1.02] transform">
+  <!-- Image Section -->
+  <div class="relative overflow-hidden">
+    <% if property.main_image %>
+      <%= image_tag property.main_image,
+                   class: "w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500",
+                   alt: property.title %>
+    <% else %>
+      <div class="w-full h-56 bg-gradient-to-br from-indigo-50 to-blue-100 flex items-center justify-center">
+        <svg class="w-16 h-16 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+      </div>
+    <% end %>
+
+    <!-- Price Badge -->
+    <div class="absolute top-4 left-4">
+      <span class="bg-white/95 backdrop-blur-sm text-indigo-600 font-bold text-lg px-4 py-2 rounded-full shadow-lg">
+        $<%= number_with_delimiter(property.price, delimiter: ',') %>
+      </span>
     </div>
-  <% end %>
 
-  <div class="p-4">
-    <h3 class="text-xl font-semibold text-gray-900 mb-2">
-      <%= link_to property.title, property, class: "hover:text-indigo-600" %>
-    </h3>
-
-    <p class="text-2xl font-bold text-indigo-600 mb-2">$<%= property.price %></p>
-
-    <div class="flex items-center text-sm text-gray-500 mb-3">
-      <span class="mr-4"><%= property.bedrooms %> beds</span>
-      <span class="mr-4"><%= property.bathrooms %> baths</span>
-      <% if property.square_feet %>
-        <span><%= number_to_human(property.square_feet) %> sqft</span>
+    <!-- Favorite Button -->
+    <div class="absolute top-4 right-4">
+      <% if user_signed_in? %>
+        <%= button_to toggle_favorite_property_path(property),
+                    method: :post,
+                    class: "p-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg hover:scale-110 transition-transform",
+                    data: { turbo: false } do %>
+          <svg class="w-5 h-5 <%= current_user.favorited?(property) ? 'text-red-500 fill-current' : 'text-gray-400' %>"
+               fill="<%= current_user.favorited?(property) ? 'currentColor' : 'none' %>"
+               stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+        <% end %>
       <% end %>
     </div>
+  </div>
 
-    <p class="text-sm text-gray-600 mb-3"><%= property.city %>, <%= property.state %></p>
+  <!-- Content Section -->
+  <div class="p-6">
+    <!-- Property Type -->
+    <span class="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full mb-3">
+      <%= property.property_type%>
+    </span>
 
-    <div class="flex items-center justify-between">
-      <span class="text-xs text-gray-500">Available <%= property.available_from.strftime('%b %d') %></span>
-      <%= link_to "View Details", property, class: "btn btn-primary text-sm" %>
+    <!-- Title -->
+    <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-1">
+      <%= link_to property.title, property %>
+    </h3>
+
+    <!-- Location -->
+    <div class="flex items-center text-gray-600 mb-4">
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+      </svg>
+      <span class="text-sm"><%= property.city %>, <%= property.state %></span>
     </div>
+
+    <!-- Features -->
+    <div class="grid grid-cols-3 gap-4 mb-5">
+      <div class="text-center p-2 bg-gray-50 rounded-lg">
+        <div class="text-2xl font-bold text-indigo-600"><%= property.bedrooms %></div>
+        <div class="text-xs text-gray-600">Beds</div>
+      </div>
+      <div class="text-center p-2 bg-gray-50 rounded-lg">
+        <div class="text-2xl font-bold text-indigo-600"><%= property.bathrooms %></div>
+        <div class="text-xs text-gray-600">Baths</div>
+      </div>
+      <div class="text-center p-2 bg-gray-50 rounded-lg">
+        <div class="text-2xl font-bold text-indigo-600"><%= number_to_human(property.square_feet) %></div>
+        <div class="text-xs text-gray-600">Sq Ft</div>
+      </div>
+    </div>
+
+    <!-- Availability -->
+    <div class="flex items-center justify-between mb-4">
+      <span class="text-sm text-gray-600">Available from</span>
+      <span class="text-sm font-semibold text-gray-900"><%= property.available_from.strftime('%b %d, %Y') %></span>
+    </div>
+
+    <!-- Action Button -->
+    <%= link_to property_path(property),
+                class: "w-full btn-primary-lg group-hover:bg-indigo-700 group-hover:shadow-lg transition-all duration-200 flex items-center justify-center" do %>
+      View Details
+      <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    <% end %>
   </div>
 </div>
