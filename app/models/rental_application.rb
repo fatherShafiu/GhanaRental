@@ -3,7 +3,7 @@ class RentalApplication < ApplicationRecord
   belongs_to :tenant, class_name: "User"
   has_many :notifications, as: :notifiable, dependent: :destroy
 
-  enum status: { pending: 0, approved: 1, rejected: 2, withdrawn: 3 }
+  enum :status, { pending: 0, approved: 1, rejected: 2, withdrawn: 3 }
 
   validates :message, presence: true, length: { maximum: 1000 }
   validates :tenant_id, uniqueness: { scope: :property_id, message: "has already applied for this property" }
