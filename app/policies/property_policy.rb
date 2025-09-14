@@ -46,4 +46,8 @@ class PropertyPolicy < ApplicationPolicy
   def archive?
     update?
   end
+
+  def my_properties?
+    user.landlord? || user.admin?
+  end
 end
