@@ -14,11 +14,12 @@
     <% end %>
 
     <!-- Price Badge -->
-    <div class="absolute top-4 left-4">
-      <span class="bg-white/95 backdrop-blur-sm text-indigo-600 font-bold text-lg px-4 py-2 rounded-full shadow-lg">
-        $<%= number_with_delimiter(property.price, delimiter: ',') %>
-      </span>
-    </div>
+  <!-- Price Badge -->
+<div class="absolute top-4 left-4">
+  <span class="bg-white/95 backdrop-blur-sm text-indigo-600 font-bold text-lg px-4 py-2 rounded-full shadow-lg">
+    Gh₵<%= number_with_delimiter(property.price, delimiter: ',') %>
+  </span>
+</div>
 
     <!-- Favorite Button -->
     <div class="absolute top-4 right-4">
