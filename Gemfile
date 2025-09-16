@@ -79,4 +79,4 @@ gem "groupdate", "~> 6.7"
 
 gem "rack-attack", "~> 6.7"
 
-gem "skylight", "~> 6.0"
+gem "skylight", "~> 7.0"
