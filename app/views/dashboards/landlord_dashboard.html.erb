@@ -1,88 +1,124 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">Landlord Dashboard</h1>
-    <%= link_to 'Add New Property', new_property_path, class: "btn btn-primary" %>
-  </div>
+<%= turbo_stream_from "landlord_dashboard" %>
 
-  <!-- Stats Overview -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Total Properties</h3>
-      <p class="text-3xl font-bold text-indigo-600"><%= @properties.count %></p>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+      <div>
+        <h1 class="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          Landlord Dashboard
+        </h1>
+        <p class="text-lg text-gray-600">Manage your properties and track performance</p>
+      </div>
+      <%= link_to new_property_path, class: "btn-primary-lg flex items-center group mt-4 md:mt-0" do %>
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add New Property
+      <% end %>
     </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Published</h3>
-      <p class="text-3xl font-bold text-green-600"><%= @published_count %></p>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Drafts</h3>
-      <p class="text-3xl font-bold text-yellow-600"><%= @draft_count %></p>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Total Favorites</h3>
-      <p class="text-3xl font-bold text-pink-600"><%= @total_favorites %></p>
-    </div>
-  </div>
 
-  <!-- Properties List -->
-  <div class="bg-white rounded-lg shadow p-6">
-    <h2 class="text-xl font-semibold mb-4">Your Properties</h2>
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mr-4">
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Total Properties</h3>
+        </div>
+        <p class="text-3xl font-bold text-indigo-600"><%= @properties.count %></p>
+      </div>
 
-    <% if @properties.any? %>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Favorites</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <% @properties.each do |property| %>
+      <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Published</h3>
+        </div>
+        <p class="text-3xl font-bold text-green-600"><%= @published_count %></p>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Drafts</h3>
+        </div>
+        <p class="text-3xl font-bold text-yellow-600"><%= @draft_count %></p>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mr-4">
+            <svg class="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Total Favorites</h3>
+        </div>
+        <p class="text-3xl font-bold text-pink-600"><%= @total_favorites %></p>
+      </div>
+    </div>
+
+    <!-- Properties List -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">Your Properties</h2>
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-500">Sort by:</span>
+          <select class="text-sm border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-indigo-500">
+            <option>Newest First</option>
+            <option>Oldest First</option>
+            <option>Most Popular</option>
+          </select>
+        </div>
+      </div>
+
+      <% if @properties.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
               <tr>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <% if property.images.attached? %>
-                      <%= image_tag property.images.first, class: "h-10 w-10 rounded-full object-cover mr-3" %>
-                    <% end %>
-                    <div>
-                      <%= link_to property.title, property, class: "text-indigo-600 hover:text-indigo-900 font-medium" %>
-                      <p class="text-sm text-gray-500"><%= property.city %>, <%= property.state %></p>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">Gh₵<%= property.price %></td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-2 py-1 text-xs font-semibold rounded-full
-                    <%= property.published? ? 'bg-green-100 text-green-800' :
-                       property.draft? ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' %>">
-                    <%= property.status %>
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <%= property.favorites.count %> favorites
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <%= link_to 'Edit', edit_property_path(property), class: "text-indigo-600 hover:text-indigo-900 mr-3" %>
-                  <% if property.draft? %>
-                    <%= button_to 'Publish', publish_property_path(property), method: :patch, class: "text-green-600 hover:text-green-900 mr-3" %>
-                  <% elsif property.published? %>
-                    <%= button_to 'Archive', archive_property_path(property), method: :patch, class: "text-gray-600 hover:text-gray-900" %>
-                  <% end %>
-                </td>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Favorites</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    <% else %>
-      <div class="text-center py-8">
-        <p class="text-gray-500 mb-4">You haven't listed any properties yet.</p>
-        <%= link_to 'List Your First Property', new_property_path, class: "btn btn-primary" %>
-      </div>
-    <% end %>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200" id="properties-list">
+              <% @properties.each do |property| %>
+                <%= render 'properties/property_row', property: property %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="text-center py-12">
+          <div class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-12 h-12 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No properties yet</h3>
+          <p class="text-gray-500 mb-6">Start by listing your first property to attract tenants</p>
+          <%= link_to new_property_path, class: "btn-primary-lg inline-flex items-center group" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            List Your First Property
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>

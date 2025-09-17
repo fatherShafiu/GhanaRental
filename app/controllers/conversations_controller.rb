@@ -22,7 +22,11 @@ class ConversationsController < ApplicationController
                     Conversation.create!(sender: current_user, recipient: recipient, property: property)
 
     authorize @conversation
-    redirect_to conversation_path(@conversation)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to conversation_path(@conversation) }
+    end
   end
 
   private

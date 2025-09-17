@@ -69,11 +69,29 @@ class PropertiesController < ApplicationController
     redirect_to properties_url, notice: "Property was successfully destroyed."
   end
 
-  def publish
-    authorize @property
-    @property.published!
-    redirect_to @property, notice: "Property is now published."
+def publish
+  @property = current_user.properties.find(params[:id])
+  if @property.update(status: :published)
+    respond_to do |format|
+      format.html { redirect_to my_properties_properties_path, notice: "Property published successfully!" }
+      format.turbo_stream
+    end
+  else
+    redirect_to my_properties_properties_path, alert: "Failed to publish property."
   end
+end
+
+def archive
+  @property = current_user.properties.find(params[:id])
+  if @property.update(status: :archived)
+    respond_to do |format|
+      format.html { redirect_to my_properties_properties_path, notice: "Property archived successfully!" }
+      format.turbo_stream
+    end
+  else
+    redirect_to my_properties_properties_path, alert: "Failed to archive property."
+  end
+end
 
   def archive
     authorize @property
