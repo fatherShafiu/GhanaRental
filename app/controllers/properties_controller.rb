@@ -69,20 +69,33 @@ class PropertiesController < ApplicationController
     redirect_to properties_url, notice: "Property was successfully destroyed."
   end
 
+# app/controllers/properties_controller.rb
+# app/controllers/properties_controller.rb
 def publish
   @property = current_user.properties.find(params[:id])
-  if @property.update(status: :published)
+  authorize @property, :publish?
+
+  # Use update_column to skip validations for status changes
+  if @property.update_column(:status, :published)
+    @property.reload # Reload to get the updated status
+
     respond_to do |format|
       format.html { redirect_to my_properties_properties_path, notice: "Property published successfully!" }
-      format.turbo_stream
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.replace(@property, partial: "properties/property_row", locals: { property: @property }),
+          turbo_stream.update("flash", partial: "shared/flash", locals: { notice: "Property published successfully!" })
+        ]
+      end
     end
   else
     redirect_to my_properties_properties_path, alert: "Failed to publish property."
   end
 end
-
 def archive
   @property = current_user.properties.find(params[:id])
+  authorize @property, :update? # Authorize the action
+
   if @property.update(status: :archived)
     respond_to do |format|
       format.html { redirect_to my_properties_properties_path, notice: "Property archived successfully!" }

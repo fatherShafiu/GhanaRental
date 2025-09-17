@@ -26,9 +26,9 @@ class PropertyPolicy < ApplicationPolicy
   def new?
     create?
   end
-
   def update?
-    admin? || (landlord? && record.landlord == user)
+    # Only the property owner can update their property
+    user.present? && (record.landlord == user || user.admin?)
   end
 
   def edit?
