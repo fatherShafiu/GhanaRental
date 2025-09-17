@@ -1,0 +1,7 @@
+<%= turbo_stream.replace @property do %>
+  <%= render 'properties/property_row', property: @property %>
+<% end %>
+
+<%= turbo_stream.update "flash" do %>
+  <%= render 'shared/flash' %>
+<% end %>
